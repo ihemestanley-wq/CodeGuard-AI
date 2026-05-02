@@ -9,6 +9,7 @@ const config = require('./config');
 const { applySecurityMiddleware } = require('./middleware/security');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const apiRoutes = require('./routes/analyze');
+const modesRoutes = require('./routes/modes');
 const logger = require('../observability/logger');
 
 // Create Express app
@@ -46,6 +47,7 @@ app.use('/examples', express.static(path.join(__dirname, '../../examples')));
 
 // API routes
 app.use('/api', apiRoutes);
+app.use('/api', modesRoutes);
 
 // Root route - serve vanilla JS UI index.html
 app.get('/', (req, res) => {
