@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+
 const router = express.Router();
 const { analyzeCodeChanges } = require('../../agent/analyzer');
 const { parseDiff, extractCodeChanges } = require('../../agent/diffParser');
@@ -22,13 +23,13 @@ router.post('/analyze', validateAnalyzeRequest, asyncHandler(async (req, res) =>
 
   logger.info('Received analyze request', {
     diffSize: diffContent.length,
-    ip: req.ip
+    ip: req.ip,
   });
 
   try {
     // Parse the diff
     const parsedDiff = parseDiff(diffContent);
-    
+
     if (parsedDiff.length === 0) {
       return res.json({
         success: true,
@@ -42,27 +43,27 @@ router.post('/analyze', validateAnalyzeRequest, asyncHandler(async (req, res) =>
         metadata: {
           processingTime: Date.now() - startTime,
           timestamp: new Date().toISOString(),
-          diffSize: diffContent.length
-        }
+          diffSize: diffContent.length,
+        },
       });
     }
-    
+
     // Extract code changes
     const codeChanges = extractCodeChanges(parsedDiff);
-    
+
     // Analyze code changes
     const analysisResults = await analyzeCodeChanges(codeChanges);
-    
+
     // Calculate risk score
     const riskAssessment = calculateRiskScore(analysisResults, parsedDiff, codeChanges);
-    
+
     // Calculate processing time
     const processingTime = Date.now() - startTime;
 
     logger.info('Analysis completed successfully', {
       processingTime,
       riskLevel: riskAssessment.level,
-      riskScore: riskAssessment.score
+      riskScore: riskAssessment.score,
     });
 
     // Return structured JSON response for frontend
@@ -78,20 +79,19 @@ router.post('/analyze', validateAnalyzeRequest, asyncHandler(async (req, res) =>
       metadata: {
         processingTime,
         timestamp: new Date().toISOString(),
-        diffSize: diffContent.length
-      }
+        diffSize: diffContent.length,
+      },
     });
-
   } catch (error) {
     logger.error('Analysis failed', {
       error: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
 
     // Return error response
     res.status(500).json({
       success: false,
-      error: 'Analysis failed: ' + error.message
+      error: `Analysis failed: ${error.message}`,
     });
   }
 }));
@@ -101,16 +101,16 @@ router.post('/analyze', validateAnalyzeRequest, asyncHandler(async (req, res) =>
  */
 function getRiskSummary(riskAssessment) {
   const { level, components } = riskAssessment;
-  
+
   const summaries = {
-    'LOW': 'This PR looks good! No significant issues detected.',
-    'MEDIUM': 'This PR has some concerns that should be reviewed before merging.',
-    'HIGH': 'This PR has several issues that need attention before deployment.',
-    'CRITICAL': 'This PR has critical issues that must be addressed immediately.'
+    LOW: 'This PR looks good! No significant issues detected.',
+    MEDIUM: 'This PR has some concerns that should be reviewed before merging.',
+    HIGH: 'This PR has several issues that need attention before deployment.',
+    CRITICAL: 'This PR has critical issues that must be addressed immediately.',
   };
-  
+
   let summary = summaries[level] || 'Analysis complete.';
-  
+
   // Add specific concerns
   const concerns = [];
   if (components.security.total > 0) {
@@ -122,11 +122,11 @@ function getRiskSummary(riskAssessment) {
   if (components.fileCriticality.criticalFiles > 0) {
     concerns.push(`${components.fileCriticality.criticalFiles} critical file${components.fileCriticality.criticalFiles > 1 ? 's' : ''} modified`);
   }
-  
+
   if (concerns.length > 0) {
-    summary += ' Found: ' + concerns.join(', ') + '.';
+    summary += ` Found: ${concerns.join(', ')}.`;
   }
-  
+
   return summary;
 }
 
@@ -140,7 +140,7 @@ router.get('/health', (req, res) => {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    version: require('../../../package.json').version
+    version: require('../../../package.json').version,
   });
 });
 

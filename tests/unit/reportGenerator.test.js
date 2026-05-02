@@ -36,7 +36,9 @@ describe('ReportGenerator', () => {
       security: {
         score: 15,
         total: 2,
-        breakdown: { critical: 0, high: 1, medium: 1, low: 0 },
+        breakdown: {
+          critical: 0, high: 1, medium: 1, low: 0,
+        },
       },
       complexity: {
         score: 10,
@@ -89,7 +91,13 @@ describe('ReportGenerator', () => {
         level: 'LOW',
         components: {
           ...createMockRiskAssessment().components,
-          security: { score: 0, total: 0, breakdown: { critical: 0, high: 0, medium: 0, low: 0 } },
+          security: {
+            score: 0,
+            total: 0,
+            breakdown: {
+              critical: 0, high: 0, medium: 0, low: 0,
+            },
+          },
         },
       });
       const analysisResults = createMockAnalysisResults();
@@ -113,7 +121,9 @@ describe('ReportGenerator', () => {
           security: {
             score: 50,
             total: 3,
-            breakdown: { critical: 2, high: 1, medium: 0, low: 0 },
+            breakdown: {
+              critical: 2, high: 1, medium: 0, low: 0,
+            },
           },
         },
       });
@@ -247,7 +257,9 @@ describe('ReportGenerator', () => {
 
     test('should include file changes metadata', () => {
       const riskAssessment = createMockRiskAssessment({
-        metadata: { filesChanged: 5, totalAdditions: 200, totalDeletions: 50, duration: 150 },
+        metadata: {
+          filesChanged: 5, totalAdditions: 200, totalDeletions: 50, duration: 150,
+        },
       });
 
       const summary = generateExecutiveSummary(riskAssessment);
@@ -313,10 +325,18 @@ describe('ReportGenerator', () => {
 
     test('should list all security findings with severity counts', () => {
       const securityFindings = [
-        { type: 'sql_injection', severity: 'critical', message: 'SQL injection', file: 'db.js', line: 10 },
-        { type: 'xss', severity: 'high', message: 'XSS vulnerability', file: 'view.js', line: 20 },
-        { type: 'weak_crypto', severity: 'medium', message: 'Weak encryption', file: 'crypto.js', line: 30 },
-        { type: 'info_leak', severity: 'low', message: 'Information leak', file: 'log.js', line: 40 },
+        {
+          type: 'sql_injection', severity: 'critical', message: 'SQL injection', file: 'db.js', line: 10,
+        },
+        {
+          type: 'xss', severity: 'high', message: 'XSS vulnerability', file: 'view.js', line: 20,
+        },
+        {
+          type: 'weak_crypto', severity: 'medium', message: 'Weak encryption', file: 'crypto.js', line: 30,
+        },
+        {
+          type: 'info_leak', severity: 'low', message: 'Information leak', file: 'log.js', line: 40,
+        },
       ];
 
       const findings = generateSecurityFindings(securityFindings);
@@ -359,7 +379,9 @@ describe('ReportGenerator', () => {
 
     test('should handle findings without code field', () => {
       const securityFindings = [
-        { type: 'xss', severity: 'high', message: 'XSS', file: 'app.js', line: 10 },
+        {
+          type: 'xss', severity: 'high', message: 'XSS', file: 'app.js', line: 10,
+        },
       ];
 
       const findings = generateSecurityFindings(securityFindings);
@@ -369,9 +391,15 @@ describe('ReportGenerator', () => {
 
     test('should group findings by severity correctly', () => {
       const securityFindings = [
-        { type: 'issue1', severity: 'critical', message: 'Critical issue', file: 'a.js', line: 1 },
-        { type: 'issue2', severity: 'critical', message: 'Another critical', file: 'b.js', line: 2 },
-        { type: 'issue3', severity: 'high', message: 'High issue', file: 'c.js', line: 3 },
+        {
+          type: 'issue1', severity: 'critical', message: 'Critical issue', file: 'a.js', line: 1,
+        },
+        {
+          type: 'issue2', severity: 'critical', message: 'Another critical', file: 'b.js', line: 2,
+        },
+        {
+          type: 'issue3', severity: 'high', message: 'High issue', file: 'c.js', line: 3,
+        },
       ];
 
       const findings = generateSecurityFindings(securityFindings);
@@ -391,8 +419,12 @@ describe('ReportGenerator', () => {
 
     test('should list all complexity issues', () => {
       const complexityIssues = [
-        { file: 'src/utils.js', complexity: 25, threshold: 20, message: 'Function too complex' },
-        { file: 'src/parser.js', complexity: 30, threshold: 20, message: 'High cyclomatic complexity' },
+        {
+          file: 'src/utils.js', complexity: 25, threshold: 20, message: 'Function too complex',
+        },
+        {
+          file: 'src/parser.js', complexity: 30, threshold: 20, message: 'High cyclomatic complexity',
+        },
       ];
 
       const analysis = generateComplexityAnalysis(complexityIssues);
@@ -407,7 +439,9 @@ describe('ReportGenerator', () => {
 
     test('should include complexity messages', () => {
       const complexityIssues = [
-        { file: 'app.js', complexity: 22, threshold: 20, message: 'Refactor recommended' },
+        {
+          file: 'app.js', complexity: 22, threshold: 20, message: 'Refactor recommended',
+        },
       ];
 
       const analysis = generateComplexityAnalysis(complexityIssues);
@@ -589,7 +623,9 @@ describe('ReportGenerator', () => {
           security: {
             score: 50,
             total: 2,
-            breakdown: { critical: 2, high: 0, medium: 0, low: 0 },
+            breakdown: {
+              critical: 2, high: 0, medium: 0, low: 0,
+            },
           },
         },
       });
@@ -607,7 +643,9 @@ describe('ReportGenerator', () => {
           security: {
             score: 30,
             total: 1,
-            breakdown: { critical: 0, high: 1, medium: 0, low: 0 },
+            breakdown: {
+              critical: 0, high: 1, medium: 0, low: 0,
+            },
           },
         },
       });
@@ -641,7 +679,9 @@ describe('ReportGenerator', () => {
           fileCriticality: {
             score: 20,
             criticalFiles: 2,
-            breakdown: { critical: ['auth.js', 'payment.js'], high: [], medium: [], low: [] },
+            breakdown: {
+              critical: ['auth.js', 'payment.js'], high: [], medium: [], low: [],
+            },
           },
         },
       });
@@ -750,7 +790,13 @@ describe('ReportGenerator', () => {
       const riskAssessment = createMockRiskAssessment({
         components: {
           ...createMockRiskAssessment().components,
-          security: { score: 30, total: 2, breakdown: { critical: 1, high: 1, medium: 0, low: 0 } },
+          security: {
+            score: 30,
+            total: 2,
+            breakdown: {
+              critical: 1, high: 1, medium: 0, low: 0,
+            },
+          },
         },
       });
 
@@ -840,7 +886,13 @@ describe('ReportGenerator', () => {
       const riskAssessment = createMockRiskAssessment({
         components: {
           ...createMockRiskAssessment().components,
-          security: { score: 30, total: 2, breakdown: { critical: 1, high: 1, medium: 0, low: 0 } },
+          security: {
+            score: 30,
+            total: 2,
+            breakdown: {
+              critical: 1, high: 1, medium: 0, low: 0,
+            },
+          },
         },
       });
 
@@ -1007,7 +1059,13 @@ describe('ReportGenerator', () => {
         level: 'HIGH',
         components: {
           ...createMockRiskAssessment().components,
-          security: { score: 30, total: 2, breakdown: { critical: 1, high: 1, medium: 0, low: 0 } },
+          security: {
+            score: 30,
+            total: 2,
+            breakdown: {
+              critical: 1, high: 1, medium: 0, low: 0,
+            },
+          },
         },
       });
 

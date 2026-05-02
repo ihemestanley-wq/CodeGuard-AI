@@ -14,9 +14,9 @@ const DECISIONS = {
 
 // Decision thresholds
 const THRESHOLDS = {
-  BLOCK: 80,           // Block if risk score >= 80
+  BLOCK: 80, // Block if risk score >= 80
   REQUIRE_APPROVAL: 40, // Require approval if risk score >= 40
-  AUTO_APPROVE: 40,    // Auto-approve if risk score < 40
+  AUTO_APPROVE: 40, // Auto-approve if risk score < 40
 };
 
 // Critical security types that always block
@@ -33,11 +33,11 @@ const BLOCKING_SECURITY_TYPES = [
  */
 function checkSecurityBlock(securityFindings) {
   const criticalFindings = securityFindings.filter(
-    f => f.severity === 'critical'
+    (f) => f.severity === 'critical',
   );
 
   const blockingFindings = securityFindings.filter(
-    f => BLOCKING_SECURITY_TYPES.includes(f.type)
+    (f) => BLOCKING_SECURITY_TYPES.includes(f.type),
   );
 
   if (criticalFindings.length > 0 || blockingFindings.length > 0) {
@@ -59,7 +59,7 @@ function checkSecurityBlock(securityFindings) {
  */
 function checkCriticalFilesBlock(fileCriticalityRisk, riskScore) {
   const { breakdown } = fileCriticalityRisk;
-  
+
   // Block if critical files are changed and risk is high
   if (breakdown.critical.length > 0 && riskScore >= THRESHOLDS.REQUIRE_APPROVAL) {
     return {
@@ -81,21 +81,21 @@ function checkCriticalFilesBlock(fileCriticalityRisk, riskScore) {
  */
 function checkPatternBlock(patternRisk, riskScore) {
   const { patterns } = patternRisk;
-  
+
   const criticalPatterns = [
     'databaseSchema',
     'authentication',
     'authorization',
   ];
 
-  const hasCriticalPattern = patterns.some(p => criticalPatterns.includes(p));
+  const hasCriticalPattern = patterns.some((p) => criticalPatterns.includes(p));
 
   if (hasCriticalPattern && riskScore >= THRESHOLDS.REQUIRE_APPROVAL) {
     return {
       shouldBlock: false,
       requiresApproval: true,
       reason: 'Critical patterns detected requiring review',
-      patterns: patterns.filter(p => criticalPatterns.includes(p)),
+      patterns: patterns.filter((p) => criticalPatterns.includes(p)),
     };
   }
 
@@ -123,11 +123,11 @@ function determineRequiredApprovers(riskAssessment, analysisResults) {
   } else if (level === 'HIGH') {
     approvers.push('senior-engineer');
     approvers.push('team-lead');
-    
+
     if (components.security.total > 0) {
       approvers.push('security-team');
     }
-    
+
     if (components.patterns.patterns.includes('databaseSchema')) {
       approvers.push('database-team');
     }
@@ -195,7 +195,7 @@ function generateDeploymentConditions(riskAssessment, analysisResults) {
  */
 function calculateDeploymentConfidence(riskAssessment, analysisResults) {
   const { score, components } = riskAssessment;
-  
+
   // Start with inverse of risk score
   let confidence = 100 - score;
 
@@ -289,10 +289,9 @@ function makeDeploymentDecision(riskAssessment, analysisResults) {
   const criticalFilesCheck = checkCriticalFilesBlock(components.fileCriticality, score);
   const patternCheck = checkPatternBlock(components.patterns, score);
 
-  const requiresApproval = 
-    score >= THRESHOLDS.REQUIRE_APPROVAL ||
-    criticalFilesCheck.requiresApproval ||
-    patternCheck.requiresApproval;
+  const requiresApproval = score >= THRESHOLDS.REQUIRE_APPROVAL
+    || criticalFilesCheck.requiresApproval
+    || patternCheck.requiresApproval;
 
   if (requiresApproval) {
     const approvers = determineRequiredApprovers(riskAssessment, analysisResults);
@@ -353,7 +352,9 @@ function makeDeploymentDecision(riskAssessment, analysisResults) {
  * @returns {string} Formatted decision
  */
 function formatDecision(decision) {
-  const { decision: type, reason, riskScore, riskLevel, confidence } = decision;
+  const {
+    decision: type, reason, riskScore, riskLevel, confidence,
+  } = decision;
 
   let output = `
 ═══════════════════════════════════════════════════════════════════════════
@@ -371,7 +372,7 @@ function formatDecision(decision) {
 
 `;
     if (decision.blockingFindings) {
-      output += `BLOCKING ISSUES:\n`;
+      output += 'BLOCKING ISSUES:\n';
       decision.blockingFindings.forEach((finding, i) => {
         output += `  ${i + 1}. [${finding.severity.toUpperCase()}] ${finding.type}\n`;
         output += `     ${finding.file}:${finding.line}\n`;
@@ -380,12 +381,11 @@ function formatDecision(decision) {
     }
 
     if (decision.requiredActions) {
-      output += `REQUIRED ACTIONS:\n`;
+      output += 'REQUIRED ACTIONS:\n';
       decision.requiredActions.forEach((action, i) => {
         output += `  ${i + 1}. ${action}\n`;
       });
     }
-
   } else if (type === DECISIONS.REQUIRE_APPROVAL) {
     output += `⏸️  DECISION: MANUAL APPROVAL REQUIRED
 
@@ -400,18 +400,17 @@ REQUIRED APPROVERS:
       output += `  ${i + 1}. ${approver}\n`;
     });
 
-    output += `\nDEPLOYMENT CONDITIONS:\n`;
+    output += '\nDEPLOYMENT CONDITIONS:\n';
     decision.deploymentConditions.forEach((condition, i) => {
       output += `  ${i + 1}. ${condition}\n`;
     });
 
     if (decision.criticalFiles && decision.criticalFiles.length > 0) {
-      output += `\nCRITICAL FILES:\n`;
-      decision.criticalFiles.forEach(file => {
+      output += '\nCRITICAL FILES:\n';
+      decision.criticalFiles.forEach((file) => {
         output += `  • ${file}\n`;
       });
     }
-
   } else {
     output += `✅ DECISION: AUTO-APPROVED
 

@@ -24,7 +24,7 @@ const SECURITY_PATTERNS = {
     'eval', 'Function', 'setTimeout', 'setInterval',
     'execSync', 'exec', 'spawn', 'system',
   ],
-  
+
   // SQL injection patterns
   sqlPatterns: [
     /execute\s*\(\s*["'`].*\$\{/i,
@@ -34,14 +34,14 @@ const SECURITY_PATTERNS = {
     /UPDATE.*SET.*\$\{/i,
     /DELETE.*FROM.*WHERE.*\$\{/i,
   ],
-  
+
   // Command injection patterns
   commandPatterns: [
     /exec\s*\(\s*["'`].*\$\{/i,
     /spawn\s*\(\s*["'`].*\$\{/i,
     /system\s*\(\s*["'`].*\$\{/i,
   ],
-  
+
   // Hardcoded secrets patterns
   secretPatterns: [
     /password\s*=\s*["'][^"']+["']/i,
@@ -51,14 +51,14 @@ const SECURITY_PATTERNS = {
     /private[_-]?key\s*=\s*["'][^"']+["']/i,
     /aws[_-]?access[_-]?key/i,
   ],
-  
+
   // Path traversal patterns
   pathTraversalPatterns: [
     /\.\.[\/\\]/,
     /readFile\s*\(\s*.*\$\{/i,
     /writeFile\s*\(\s*.*\$\{/i,
   ],
-  
+
   // XSS patterns
   xssPatterns: [
     /innerHTML\s*=\s*.*\$\{/i,
@@ -127,7 +127,7 @@ function calculateASTDepth(node, currentDepth = 0) {
     }
 
     const value = node[key];
-    
+
     if (Array.isArray(value)) {
       for (const item of value) {
         const depth = calculateASTDepth(item, currentDepth + 1);
@@ -160,7 +160,7 @@ function countASTNodes(node) {
     }
 
     const value = node[key];
-    
+
     if (Array.isArray(value)) {
       for (const item of value) {
         count += countASTNodes(item);
@@ -183,9 +183,9 @@ function parseToAST(code, filePath) {
   try {
     // Validate code size
     if (code.length > CONFIG.MAX_CODE_SIZE) {
-      logger.warn('Code size exceeds maximum', { 
-        file: filePath, 
-        size: code.length 
+      logger.warn('Code size exceeds maximum', {
+        file: filePath,
+        size: code.length,
       });
       return null;
     }
@@ -202,11 +202,11 @@ function parseToAST(code, filePath) {
     });
 
     const parseTime = Date.now() - startTime;
-    
+
     if (parseTime > 5000) {
-      logger.warn('AST parsing took too long', { 
-        file: filePath, 
-        duration: parseTime 
+      logger.warn('AST parsing took too long', {
+        file: filePath,
+        duration: parseTime,
       });
     }
 
@@ -219,9 +219,9 @@ function parseToAST(code, filePath) {
     // Validate AST depth
     const depth = calculateASTDepth(ast);
     if (depth > CONFIG.MAX_AST_DEPTH) {
-      logger.warn('AST depth exceeds maximum', { 
-        file: filePath, 
-        depth 
+      logger.warn('AST depth exceeds maximum', {
+        file: filePath,
+        depth,
       });
       return null;
     }
@@ -229,26 +229,25 @@ function parseToAST(code, filePath) {
     // Validate node count
     const nodeCount = countASTNodes(ast);
     if (nodeCount > CONFIG.MAX_AST_NODES) {
-      logger.warn('AST node count exceeds maximum', { 
-        file: filePath, 
-        nodeCount 
+      logger.warn('AST node count exceeds maximum', {
+        file: filePath,
+        nodeCount,
       });
       return null;
     }
 
-    logger.debug('AST parsed successfully', { 
-      file: filePath, 
-      depth, 
+    logger.debug('AST parsed successfully', {
+      file: filePath,
+      depth,
       nodeCount,
-      parseTime 
+      parseTime,
     });
 
     return ast;
-
   } catch (error) {
-    logger.debug('Failed to parse code to AST', { 
-      file: filePath, 
-      error: error.message 
+    logger.debug('Failed to parse code to AST', {
+      file: filePath,
+      error: error.message,
     });
     return null;
   }
@@ -268,7 +267,7 @@ function detectSecurityIssues(code, filePath) {
   for (const func of SECURITY_PATTERNS.dangerousFunctions) {
     const regex = new RegExp(`\\b${func}\\s*\\(`, 'g');
     let match;
-    
+
     while ((match = regex.exec(code)) !== null) {
       const lineNum = code.substring(0, match.index).split('\n').length;
       findings.push({
@@ -285,7 +284,7 @@ function detectSecurityIssues(code, filePath) {
   // Check for SQL injection
   for (const pattern of SECURITY_PATTERNS.sqlPatterns) {
     let match;
-    
+
     while ((match = pattern.exec(code)) !== null) {
       const lineNum = code.substring(0, match.index).split('\n').length;
       findings.push({
@@ -302,7 +301,7 @@ function detectSecurityIssues(code, filePath) {
   // Check for command injection
   for (const pattern of SECURITY_PATTERNS.commandPatterns) {
     let match;
-    
+
     while ((match = pattern.exec(code)) !== null) {
       const lineNum = code.substring(0, match.index).split('\n').length;
       findings.push({
@@ -319,7 +318,7 @@ function detectSecurityIssues(code, filePath) {
   // Check for hardcoded secrets
   for (const pattern of SECURITY_PATTERNS.secretPatterns) {
     let match;
-    
+
     while ((match = pattern.exec(code)) !== null) {
       const lineNum = code.substring(0, match.index).split('\n').length;
       findings.push({
@@ -328,7 +327,7 @@ function detectSecurityIssues(code, filePath) {
         message: 'Potential hardcoded secret detected',
         file: filePath,
         line: lineNum,
-        code: lines[lineNum - 1]?.trim().substring(0, 50) + '...',
+        code: `${lines[lineNum - 1]?.trim().substring(0, 50)}...`,
       });
     }
   }
@@ -336,7 +335,7 @@ function detectSecurityIssues(code, filePath) {
   // Check for path traversal
   for (const pattern of SECURITY_PATTERNS.pathTraversalPatterns) {
     let match;
-    
+
     while ((match = pattern.exec(code)) !== null) {
       const lineNum = code.substring(0, match.index).split('\n').length;
       findings.push({
@@ -353,7 +352,7 @@ function detectSecurityIssues(code, filePath) {
   // Check for XSS
   for (const pattern of SECURITY_PATTERNS.xssPatterns) {
     let match;
-    
+
     while ((match = pattern.exec(code)) !== null) {
       const lineNum = code.substring(0, match.index).split('\n').length;
       findings.push({
@@ -383,15 +382,15 @@ function calculateCyclomaticComplexity(ast) {
 
     // Increment for decision points
     if (
-      node.type === 'IfStatement' ||
-      node.type === 'WhileStatement' ||
-      node.type === 'ForStatement' ||
-      node.type === 'ForInStatement' ||
-      node.type === 'ForOfStatement' ||
-      node.type === 'ConditionalExpression' ||
-      node.type === 'SwitchCase' ||
-      node.type === 'CatchClause' ||
-      (node.type === 'LogicalExpression' && (node.operator === '&&' || node.operator === '||'))
+      node.type === 'IfStatement'
+      || node.type === 'WhileStatement'
+      || node.type === 'ForStatement'
+      || node.type === 'ForInStatement'
+      || node.type === 'ForOfStatement'
+      || node.type === 'ConditionalExpression'
+      || node.type === 'SwitchCase'
+      || node.type === 'CatchClause'
+      || (node.type === 'LogicalExpression' && (node.operator === '&&' || node.operator === '||'))
     ) {
       complexity++;
     }
@@ -403,7 +402,7 @@ function calculateCyclomaticComplexity(ast) {
       }
 
       const value = node[key];
-      
+
       if (Array.isArray(value)) {
         value.forEach(traverse);
       } else if (value && typeof value === 'object' && value.type) {
@@ -444,10 +443,10 @@ async function analyzeCodeChanges(codeChanges) {
       // AST-based analysis (JavaScript only)
       if (isJavaScript) {
         const ast = parseToAST(code, file);
-        
+
         if (ast) {
           const complexity = calculateCyclomaticComplexity(ast);
-          
+
           if (complexity > COMPLEXITY_THRESHOLDS.cyclomatic) {
             results.complexityIssues.push({
               file,
@@ -465,16 +464,15 @@ async function analyzeCodeChanges(codeChanges) {
 
       // Check timeout
       if (Date.now() - startTime > CONFIG.ANALYSIS_TIMEOUT) {
-        logger.warn('Analysis timeout reached', { 
-          filesAnalyzed: results.filesAnalyzed 
+        logger.warn('Analysis timeout reached', {
+          filesAnalyzed: results.filesAnalyzed,
         });
         break;
       }
-
     } catch (error) {
-      logger.error('Error analyzing code change', { 
-        file: change.file, 
-        error: error.message 
+      logger.error('Error analyzing code change', {
+        file: change.file,
+        error: error.message,
       });
     }
   }
@@ -499,34 +497,33 @@ async function analyzeCodeChanges(codeChanges) {
 function analyzePR(diffContent) {
   try {
     logger.info('Starting PR analysis');
-    
+
     // Step 1: Parse the diff
     const parsedDiff = parseDiff(diffContent);
-    
+
     if (parsedDiff.length === 0) {
       return '✅ No changes detected in diff';
     }
-    
+
     // Step 2: Extract code changes
     const codeChanges = extractCodeChanges(parsedDiff);
-    
+
     // Step 3: Analyze code changes
     const analysisResults = analyzeCodeChanges(codeChanges);
-    
+
     // Step 4: Calculate risk score
     const riskAssessment = calculateRiskScore(analysisResults, parsedDiff, codeChanges);
-    
+
     // Step 5: Generate report
     const report = generateReport(riskAssessment, analysisResults);
-    
+
     logger.info('PR analysis completed', {
       riskScore: riskAssessment.score,
       riskLevel: riskAssessment.level,
       filesAnalyzed: analysisResults.filesAnalyzed,
     });
-    
+
     return report;
-    
   } catch (error) {
     logger.error('PR analysis failed', error);
     return `❌ Analysis failed: ${error.message}`;

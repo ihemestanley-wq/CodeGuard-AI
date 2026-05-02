@@ -3,6 +3,7 @@
  * Comprehensive test coverage for CI/CD pipeline simulation
  */
 
+const fs = require('fs');
 const {
   simulateCIPipeline,
   detectCIPlatform,
@@ -21,7 +22,6 @@ const {
 } = require('../../src/pipeline/ciSimulator');
 
 const { DECISIONS } = require('../../src/pipeline/decisionEngine');
-const fs = require('fs');
 
 // Mock logger
 jest.mock('../../src/observability/logger', () => ({
@@ -45,7 +45,7 @@ describe('CI Simulator', () => {
   beforeEach(() => {
     // Save original environment
     originalEnv = { ...process.env };
-    
+
     // Clear all environment variables
     delete process.env.GITHUB_ACTIONS;
     delete process.env.GITLAB_CI;
@@ -60,7 +60,7 @@ describe('CI Simulator', () => {
     // Mock console methods
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-    
+
     // Mock process.exit
     processExitSpy = jest.spyOn(process, 'exit').mockImplementation();
 
@@ -71,7 +71,7 @@ describe('CI Simulator', () => {
   afterEach(() => {
     // Restore original environment
     process.env = originalEnv;
-    
+
     // Restore console methods
     consoleLogSpy.mockRestore();
     consoleErrorSpy.mockRestore();
@@ -145,12 +145,12 @@ describe('CI Simulator', () => {
   describe('setGitHubOutput', () => {
     test('should write to GITHUB_OUTPUT file when available', () => {
       process.env.GITHUB_OUTPUT = '/tmp/github_output';
-      
+
       setGitHubOutput('decision', 'BLOCK');
 
       expect(fs.appendFileSync).toHaveBeenCalledWith(
         '/tmp/github_output',
-        'decision=BLOCK\n'
+        'decision=BLOCK\n',
       );
     });
 
@@ -158,13 +158,13 @@ describe('CI Simulator', () => {
       setGitHubOutput('risk_score', '75.5');
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        '::set-output name=risk_score::75.5'
+        '::set-output name=risk_score::75.5',
       );
     });
 
     test('should handle multiple outputs', () => {
       process.env.GITHUB_OUTPUT = '/tmp/github_output';
-      
+
       setGitHubOutput('decision', 'REQUIRE_APPROVAL');
       setGitHubOutput('risk_score', '50.0');
       setGitHubOutput('risk_level', 'MEDIUM');
@@ -184,7 +184,7 @@ describe('CI Simulator', () => {
       createGitHubAnnotation('warning', 'Security issue', { file: 'auth.js' });
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        '::warning file=auth.js::Security issue'
+        '::warning file=auth.js::Security issue',
       );
     });
 
@@ -195,7 +195,7 @@ describe('CI Simulator', () => {
       });
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        '::error file=db.js,line=42::SQL injection'
+        '::error file=db.js,line=42::SQL injection',
       );
     });
 
@@ -205,7 +205,7 @@ describe('CI Simulator', () => {
       });
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        '::notice,title=CodeGuard Decision::Auto-approved'
+        '::notice,title=CodeGuard Decision::Auto-approved',
       );
     });
 
@@ -217,7 +217,7 @@ describe('CI Simulator', () => {
       });
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        '::error file=payment.js,line=100,title=Security Alert::Critical issue'
+        '::error file=payment.js,line=100,title=Security Alert::Critical issue',
       );
     });
   });
@@ -231,7 +231,7 @@ describe('CI Simulator', () => {
 
       expect(fs.appendFileSync).toHaveBeenCalledWith(
         '/tmp/github_summary',
-        summary
+        summary,
       );
     });
 
@@ -403,11 +403,11 @@ describe('CI Simulator', () => {
 
       expect(fs.appendFileSync).toHaveBeenCalledWith(
         '/tmp/github_output',
-        expect.stringContaining('decision=AUTO_APPROVE')
+        expect.stringContaining('decision=AUTO_APPROVE'),
       );
       expect(fs.appendFileSync).toHaveBeenCalledWith(
         '/tmp/github_summary',
-        expect.stringContaining('CodeGuard AI Analysis')
+        expect.stringContaining('CodeGuard AI Analysis'),
       );
     });
 
@@ -452,7 +452,7 @@ describe('CI Simulator', () => {
       processGitHubActions(decision, riskAssessment, analysisResults);
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('::error')
+        expect.stringContaining('::error'),
       );
     });
 
@@ -509,7 +509,7 @@ describe('CI Simulator', () => {
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         '/project/codeguard.env',
-        expect.stringContaining('CODEGUARD_DECISION=AUTO_APPROVE')
+        expect.stringContaining('CODEGUARD_DECISION=AUTO_APPROVE'),
       );
     });
 
@@ -559,7 +559,7 @@ describe('CI Simulator', () => {
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         '/project/codeguard.env',
-        expect.stringContaining('CODEGUARD_CONFIDENCE=N/A')
+        expect.stringContaining('CODEGUARD_CONFIDENCE=N/A'),
       );
     });
   });
@@ -587,7 +587,7 @@ describe('CI Simulator', () => {
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         'codeguard.properties',
-        expect.stringContaining('codeguard.decision=REQUIRE_APPROVAL')
+        expect.stringContaining('codeguard.decision=REQUIRE_APPROVAL'),
       );
     });
 
@@ -612,7 +612,7 @@ describe('CI Simulator', () => {
 
       expect(fs.writeFileSync).toHaveBeenCalledWith(
         'codeguard.properties',
-        expect.stringContaining('codeguard.confidence=N/A')
+        expect.stringContaining('codeguard.confidence=N/A'),
       );
     });
   });
@@ -644,7 +644,7 @@ describe('CI Simulator', () => {
       exitWithCode(EXIT_CODES.SUCCESS, 'Deployment approved');
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('✅')
+        expect.stringContaining('✅'),
       );
       expect(processExitSpy).toHaveBeenCalledWith(EXIT_CODES.SUCCESS);
     });
@@ -653,7 +653,7 @@ describe('CI Simulator', () => {
       exitWithCode(EXIT_CODES.APPROVAL_REQUIRED, 'Approval needed');
 
       expect(consoleLogSpy).toHaveBeenCalledWith(
-        expect.stringContaining('⏸️')
+        expect.stringContaining('⏸️'),
       );
       expect(processExitSpy).toHaveBeenCalledWith(EXIT_CODES.APPROVAL_REQUIRED);
     });
@@ -662,7 +662,7 @@ describe('CI Simulator', () => {
       exitWithCode(EXIT_CODES.BLOCKED, 'Deployment blocked');
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('🚫')
+        expect.stringContaining('🚫'),
       );
       expect(processExitSpy).toHaveBeenCalledWith(EXIT_CODES.BLOCKED);
     });
@@ -671,7 +671,7 @@ describe('CI Simulator', () => {
       exitWithCode(EXIT_CODES.ERROR, 'Analysis failed');
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        expect.stringContaining('❌')
+        expect.stringContaining('❌'),
       );
       expect(processExitSpy).toHaveBeenCalledWith(EXIT_CODES.ERROR);
     });

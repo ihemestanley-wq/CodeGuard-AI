@@ -17,7 +17,7 @@ const CONFIG = {
     '.js', '.ts', '.jsx', '.tsx', '.py', '.java', '.go', '.rb', '.php',
     '.c', '.cpp', '.h', '.hpp', '.cs', '.swift', '.kt', '.rs', '.scala',
     '.sql', '.sh', '.bash', '.yaml', '.yml', '.json', '.xml', '.html',
-    '.css', '.scss', '.sass', '.vue', '.tf', '.dockerfile', '.md'
+    '.css', '.scss', '.sass', '.vue', '.tf', '.dockerfile', '.md',
   ],
   BLOCKED_PATHS: [
     '../', '..\\', // Path traversal
@@ -38,7 +38,7 @@ function isPathSafe(filePath) {
 
   // Check for path traversal attempts
   const normalizedPath = path.normalize(filePath).replace(/\\/g, '/');
-  
+
   for (const blocked of CONFIG.BLOCKED_PATHS) {
     if (normalizedPath.includes(blocked)) {
       logger.warn('Blocked unsafe path', { path: filePath, reason: 'path traversal' });
@@ -62,19 +62,19 @@ function isPathSafe(filePath) {
  */
 function sanitizePath(filePath) {
   if (!filePath) return '';
-  
+
   // Remove leading/trailing whitespace
   let sanitized = filePath.trim();
-  
+
   // Normalize path separators
   sanitized = sanitized.replace(/\\/g, '/');
-  
+
   // Remove any null bytes
   sanitized = sanitized.replace(/\0/g, '');
-  
+
   // Remove leading slashes for relative paths
   sanitized = sanitized.replace(/^\/+/, '');
-  
+
   return sanitized;
 }
 
@@ -96,28 +96,28 @@ function isExtensionAllowed(filePath) {
 function parseHunk(hunk) {
   const lines = hunk.split('\n');
   const header = lines[0];
-  
+
   // Parse hunk header: @@ -oldStart,oldLines +newStart,newLines @@
   const match = header.match(/@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@/);
-  
+
   if (!match) {
     return null;
   }
 
   const [, oldStart, oldLines = '1', newStart, newLines = '1'] = match;
-  
+
   const changes = [];
   let oldLineNum = parseInt(oldStart, 10);
   let newLineNum = parseInt(newStart, 10);
 
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
-    
+
     // Validate line length
     if (line.length > CONFIG.MAX_LINE_LENGTH) {
-      logger.warn('Line exceeds maximum length', { 
-        lineNum: i, 
-        length: line.length 
+      logger.warn('Line exceeds maximum length', {
+        lineNum: i,
+        length: line.length,
       });
       continue;
     }
@@ -182,7 +182,7 @@ function parseDiff(diffContent) {
   for (const section of diffSections) {
     try {
       const lines = section.split('\n');
-      
+
       // Parse file paths from first line: a/path/to/file b/path/to/file
       const filePathMatch = lines[0].match(/a\/(.+?) b\/(.+)/);
       if (!filePathMatch) {
@@ -227,12 +227,8 @@ function parseDiff(diffContent) {
       }
 
       // Calculate statistics
-      const additions = hunks.reduce((sum, hunk) => 
-        sum + hunk.changes.filter(c => c.type === 'addition').length, 0
-      );
-      const deletions = hunks.reduce((sum, hunk) => 
-        sum + hunk.changes.filter(c => c.type === 'deletion').length, 0
-      );
+      const additions = hunks.reduce((sum, hunk) => sum + hunk.changes.filter((c) => c.type === 'addition').length, 0);
+      const deletions = hunks.reduce((sum, hunk) => sum + hunk.changes.filter((c) => c.type === 'deletion').length, 0);
 
       files.push({
         path: filePath,
@@ -244,7 +240,6 @@ function parseDiff(diffContent) {
         deletions,
         extension: path.extname(filePath),
       });
-
     } catch (error) {
       logger.error('Error parsing diff section', error);
       // Continue processing other files
@@ -282,7 +277,6 @@ async function parseDiffFromFile(diffPath) {
 
     const diffContent = await fs.readFile(diffPath, 'utf8');
     return parseDiff(diffContent);
-
   } catch (error) {
     logger.error('Error reading diff file', error);
     throw error;
@@ -303,17 +297,17 @@ function extractCodeChanges(parsedDiff) {
     }
 
     for (const hunk of file.hunks) {
-      const additions = hunk.changes.filter(c => c.type === 'addition');
-      
+      const additions = hunk.changes.filter((c) => c.type === 'addition');
+
       if (additions.length > 0) {
         codeChanges.push({
           file: file.path,
           extension: file.extension,
           startLine: hunk.newStart,
-          code: additions.map(a => a.content).join('\n'),
+          code: additions.map((a) => a.content).join('\n'),
           context: hunk.changes
-            .filter(c => c.type === 'context')
-            .map(c => c.content)
+            .filter((c) => c.type === 'context')
+            .map((c) => c.content)
             .join('\n'),
         });
       }

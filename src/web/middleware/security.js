@@ -30,13 +30,13 @@ const rateLimiter = rateLimit(config.rateLimit);
 function applySecurityMiddleware(app) {
   // Apply Helmet for security headers
   app.use(helmetMiddleware);
-  
+
   // Apply CORS
   app.use(corsMiddleware);
-  
+
   // Apply rate limiting
   app.use(rateLimiter);
-  
+
   // Disable X-Powered-By header
   app.disable('x-powered-by');
 }
@@ -45,7 +45,7 @@ module.exports = {
   helmetMiddleware,
   corsMiddleware,
   rateLimiter,
-  applySecurityMiddleware
+  applySecurityMiddleware,
 };
 
 // Made with Bob
