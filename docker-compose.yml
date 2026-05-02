@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # CodeGuard AI Web Application
+  codeguard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: codeguard-ai
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - codeguard-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.codeguard.description=CodeGuard AI - DevOps Security Agent"
+      - "com.codeguard.version=1.0.0"
+
+  # Development service with hot reload
+  codeguard-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: codeguard-ai-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOST=0.0.0.0
+      - LOG_LEVEL=debug
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./logs:/app/logs
+    networks:
+      - codeguard-network
+    profiles:
+      - dev
+
+networks:
+  codeguard-network:
+    driver: bridge
+    name: codeguard-network
+
+volumes:
+  logs:
+    driver: local
+
+# Made with Bob

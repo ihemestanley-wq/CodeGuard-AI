@@ -1,0 +1,241 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run tests
+        run: npm test
+        
+      - name: Build Docker image
+        run: docker build -t codeguard-ai:${{ github.sha }} .
+        
+      - name: Save Docker image
+        run: docker save codeguard-ai:${{ github.sha }} | gzip > codeguard-ai.tar.gz
+        
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-image
+          path: codeguard-ai.tar.gz
+          
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'staging'
+    environment:
+      name: staging
+      url: https://staging.codeguard-ai.example.com
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: docker-image
+          
+      - name: Load Docker image
+        run: docker load < codeguard-ai.tar.gz
+        
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add your staging deployment commands here
+          # Example: kubectl apply -f k8s/staging/
+          
+      - name: Run smoke tests
+        run: |
+          echo "Running smoke tests..."
+          sleep 30
+          curl -f https://staging.codeguard-ai.example.com/api/health || exit 1
+          
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, deploy-staging]
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.environment == 'production'
+    environment:
+      name: production
+      url: https://codeguard-ai.example.com
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: docker-image
+          
+      - name: Load Docker image
+        run: docker load < codeguard-ai.tar.gz
+        
+      - name: Tag Docker image
+        run: |
+          docker tag codeguard-ai:${{ github.sha }} codeguard-ai:latest
+          docker tag codeguard-ai:${{ github.sha }} codeguard-ai:${{ github.ref_name }}
+          
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production environment..."
+          # Add your production deployment commands here
+          # Example: kubectl apply -f k8s/production/
+          
+      - name: Run smoke tests
+        run: |
+          echo "Running smoke tests..."
+          sleep 30
+          curl -f https://codeguard-ai.example.com/api/health || exit 1
+          
+      - name: Create deployment notification
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.ref,
+              environment: 'production',
+              description: 'Deployed version ${{ github.ref_name }}'
+            })
+            
+  deploy-heroku:
+    name: Deploy to Heroku
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.14
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          
+      - name: Verify deployment
+        run: |
+          sleep 30
+          curl -f https://${{ secrets.HEROKU_APP_NAME }}.herokuapp.com/api/health || exit 1
+          
+  publish-docker:
+    name: Publish Docker Image
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: docker-image
+          
+      - name: Load Docker image
+        run: docker load < codeguard-ai.tar.gz
+        
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: Tag and push Docker image
+        run: |
+          docker tag codeguard-ai:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/codeguard-ai:latest
+          docker tag codeguard-ai:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/codeguard-ai:${{ github.ref_name }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/codeguard-ai:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/codeguard-ai:${{ github.ref_name }}
+          
+  publish-npm:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    needs: [build, deploy-production]
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [deploy-production, publish-docker, publish-npm]
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Generate changelog
+        id: changelog
+        run: |
+          echo "## What's Changed" > RELEASE_NOTES.md
+          git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --pretty=format:"- %s (%h)" >> RELEASE_NOTES.md
+          
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body_path: RELEASE_NOTES.md
+          draft: false
+          prerelease: false
+
+# Made with Bob

@@ -1,0 +1,23 @@
+name: CodeGuard AI Scan
+
+on: [pull_request]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run CodeGuard AI
+        run: node src/index.js
+
+# Made with Bob

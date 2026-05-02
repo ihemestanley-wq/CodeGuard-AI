@@ -1,0 +1,106 @@
+{
+  "timestamp": "2026-05-01T20:39:21.144Z",
+  "summary": {
+    "total": 19,
+    "passed": 9,
+    "failed": 10,
+    "passRate": "47.4%"
+  },
+  "details": [
+    {
+      "name": "Health endpoint responds",
+      "passed": false,
+      "message": "Unexpected token 'T', \"Too many r\"... is not valid JSON"
+    },
+    {
+      "name": "Analyze endpoint with valid diff",
+      "passed": false,
+      "message": "Unexpected token 'T', \"Too many r\"... is not valid JSON"
+    },
+    {
+      "name": "Empty diff error handling",
+      "passed": false,
+      "message": "Unexpected token 'T', \"Too many r\"... is not valid JSON"
+    },
+    {
+      "name": "Missing diff field error handling",
+      "passed": false,
+      "message": "Unexpected token 'T', \"Too many r\"... is not valid JSON"
+    },
+    {
+      "name": "Invalid JSON returns error",
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "Error response has error field",
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "Too large diff error handling",
+      "passed": false,
+      "message": "Unexpected token 'T', \"Too many r\"... is not valid JSON"
+    },
+    {
+      "name": "Rate limiting is active",
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "Main HTML page loads",
+      "passed": false,
+      "message": ""
+    },
+    {
+      "name": "HTML content type is correct",
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "CSS file loads",
+      "passed": false,
+      "message": ""
+    },
+    {
+      "name": "CSS content type is correct",
+      "passed": false,
+      "message": ""
+    },
+    {
+      "name": "JS file loads",
+      "passed": false,
+      "message": ""
+    },
+    {
+      "name": "JS content type is correct",
+      "passed": false,
+      "message": ""
+    },
+    {
+      "name": "X-Content-Type-Options header present",
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "X-Frame-Options header present",
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "X-XSS-Protection header present",
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "Strict-Transport-Security header present",
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "CORS header present",
+      "passed": true,
+      "message": ""
+    }
+  ]
+}

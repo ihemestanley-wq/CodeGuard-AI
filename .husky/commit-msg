@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Validating commit message..."
+
+npx --no -- commitlint --edit "$1" || {
+  echo ""
+  echo "❌ Commit message does not follow Conventional Commits format."
+  echo ""
+  echo "Examples of valid commit messages:"
+  echo "  feat: add new risk analysis feature"
+  echo "  fix: resolve security vulnerability in parser"
+  echo "  docs: update API documentation"
+  echo "  test: add unit tests for analyzer"
+  echo "  chore: update dependencies"
+  echo ""
+  echo "Format: <type>(<scope>): <subject>"
+  echo ""
+  echo "Types: feat, fix, docs, style, refactor, test, chore"
+  echo ""
+  exit 1
+}
+
+echo "✅ Commit message is valid!"
+
+# Made with Bob

@@ -1,0 +1,69 @@
+{
+  "name": "CodeGuard AI",
+  "description": "DevOps AI Agent for analyzing git diffs and assessing deployment risks",
+  "repository": "https://github.com/yourusername/codeguard-ai",
+  "logo": "https://raw.githubusercontent.com/yourusername/codeguard-ai/main/logo.png",
+  "keywords": [
+    "devops",
+    "ai",
+    "security",
+    "code-review",
+    "ci-cd",
+    "deployment",
+    "risk-assessment"
+  ],
+  "success_url": "/",
+  "env": {
+    "NODE_ENV": {
+      "description": "Node environment",
+      "value": "production",
+      "required": true
+    },
+    "PORT": {
+      "description": "Port to run the server on",
+      "value": "3000",
+      "required": false
+    },
+    "HOST": {
+      "description": "Host to bind the server to",
+      "value": "0.0.0.0",
+      "required": false
+    },
+    "LOG_LEVEL": {
+      "description": "Logging level (error, warn, info, debug)",
+      "value": "info",
+      "required": false
+    },
+    "CORS_ORIGIN": {
+      "description": "CORS allowed origin",
+      "value": "*",
+      "required": false
+    },
+    "RATE_LIMIT_WINDOW_MS": {
+      "description": "Rate limit window in milliseconds",
+      "value": "900000",
+      "required": false
+    },
+    "RATE_LIMIT_MAX_REQUESTS": {
+      "description": "Maximum requests per window",
+      "value": "100",
+      "required": false
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "stack": "heroku-22",
+  "addons": [],
+  "scripts": {
+    "postdeploy": "echo 'CodeGuard AI deployed successfully!'"
+  }
+}

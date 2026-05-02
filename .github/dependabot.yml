@@ -1,0 +1,85 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "yourusername"
+    assignees:
+      - "yourusername"
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "automated"
+    milestone: 1
+    # Group updates
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "minor"
+          - "patch"
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+    # Ignore specific dependencies
+    ignore:
+      # Ignore major version updates for stable dependencies
+      - dependency-name: "express"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "winston"
+        update-types: ["version-update:semver-major"]
+    # Allow specific dependencies
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    # Version requirements
+    versioning-strategy: increase
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "yourusername"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "ci"
+      - "dependencies"
+      - "automated"
+
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "yourusername"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    labels:
+      - "docker"
+      - "dependencies"
+      - "automated"
+
+# Made with Bob

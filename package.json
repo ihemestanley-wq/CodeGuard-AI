@@ -1,0 +1,126 @@
+{
+  "name": "codeguard-ai",
+  "version": "1.0.0",
+  "description": "DevOps AI Agent for analyzing git diffs and assessing deployment risks",
+  "main": "src/index.js",
+  "bin": {
+    "codeguard": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "analyze": "node src/index.js",
+    "web": "node src/web/server.js",
+    "dev": "nodemon src/web/server.js",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "frontend:preview": "cd frontend && npm run preview",
+    "build": "npm run frontend:build",
+    "dev:all": "concurrently \"npm run dev\" \"npm run frontend:dev\"",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration",
+    "test:e2e": "jest tests/e2e",
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
+    "lint": "eslint src/**/*.js tests/**/*.js",
+    "lint:fix": "eslint src/**/*.js tests/**/*.js --fix",
+    "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\" \"*.md\"",
+    "format:check": "prettier --check \"src/**/*.js\" \"tests/**/*.js\" \"*.md\"",
+    "prepare": "husky install && mkdir -p logs",
+    "docker:build": "docker build -t codeguard-ai .",
+    "docker:run": "docker run -p 3000:3000 codeguard-ai",
+    "docker:compose": "docker-compose up",
+    "docker:compose:dev": "docker-compose --profile dev up",
+    "docker:compose:down": "docker-compose down",
+    "k8s:apply": "kubectl apply -f k8s/",
+    "k8s:delete": "kubectl delete -f k8s/",
+    "security:audit": "npm audit",
+    "security:fix": "npm audit fix",
+    "precommit": "lint-staged",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:patch": "standard-version --release-as patch"
+  },
+  "keywords": [
+    "devops",
+    "ai",
+    "git",
+    "diff",
+    "analysis",
+    "security",
+    "deployment",
+    "risk-assessment",
+    "ci-cd",
+    "code-review"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/codeguard-ai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/codeguard-ai/issues"
+  },
+  "homepage": "https://github.com/yourusername/codeguard-ai#readme",
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "dependencies": {
+    "acorn": "^8.16.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.7.0",
+    "helmet": "^7.0.0",
+    "multer": "^1.4.5-lts.1",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.6",
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-security": "^1.7.1",
+    "husky": "^8.0.3",
+    "jest": "^29.7.0",
+    "license-checker": "^25.0.1",
+    "lint-staged": "^15.2.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.1.1",
+    "standard-version": "^9.5.0",
+    "supertest": "^6.3.3"
+  },
+  "optionalDependencies": {
+    "opossum": "^8.5.0",
+    "p-retry": "^5.1.2"
+  },
+  "directories": {
+    "example": "examples",
+    "test": "tests"
+  },
+  "types": "types/index.d.ts",
+  "files": [
+    "src/",
+    "types/",
+    "examples/",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}

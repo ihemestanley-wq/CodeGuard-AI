@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CodeGuard AI - Intelligent PR Analysis and Risk Assessment">
+    <title>CodeGuard AI - PR Comment Simulator</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 2L3 9V23L16 30L29 23V9L16 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M16 16L22 12M16 16L10 12M16 16V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h1>CodeGuard AI</h1>
+                </div>
+                <nav class="nav">
+                    <a href="#" class="nav-link">Documentation</a>
+                    <a href="https://github.com" class="nav-link" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <h2 class="hero-title">PR Comment Simulator</h2>
+                <p class="hero-description">
+                    Analyze your pull request diffs with AI-powered security, complexity, and performance insights.
+                    Get instant feedback in a familiar GitHub PR comment format.
+                </p>
+            </section>
+
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Submit Your Diff</h3>
+                        <button id="loadSampleBtn" class="btn-secondary">Load Sample Diff</button>
+                    </div>
+                    <div class="card-body">
+                        <!-- Instructions -->
+                        <div class="instructions">
+                            <p><strong>How to use:</strong></p>
+                            <ol>
+                                <li>Paste your git diff output below, or upload a .diff file</li>
+                                <li>Click "Analyze PR" to get instant feedback</li>
+                                <li>Review the AI-generated analysis in PR comment format</li>
+                            </ol>
+                        </div>
+
+                        <!-- Diff Input -->
+                        <div class="form-group">
+                            <label for="diffInput" class="form-label">
+                                Diff Content
+                                <span class="label-hint">(Git diff format)</span>
+                            </label>
+                            <textarea 
+                                id="diffInput" 
+                                class="form-textarea" 
+                                placeholder="Paste your git diff here...&#10;&#10;Example:&#10;diff --git a/src/app.js b/src/app.js&#10;index 1234567..abcdefg 100644&#10;--- a/src/app.js&#10;+++ b/src/app.js&#10;@@ -10,5 +10,8 @@&#10; function authenticate(user) {&#10;-  return user.password === password;&#10;+  return bcrypt.compare(user.password, hash);&#10; }"
+                                rows="12"
+                            ></textarea>
+                            <div class="char-count">
+                                <span id="charCount">0</span> characters
+                            </div>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="form-group">
+                            <label for="fileInput" class="form-label">Or Upload a .diff File</label>
+                            <div class="file-input-wrapper">
+                                <input 
+                                    type="file" 
+                                    id="fileInput" 
+                                    class="file-input" 
+                                    accept=".diff,.patch,.txt"
+                                >
+                                <label for="fileInput" class="file-input-label">
+                                    <svg class="upload-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M10 13V4M10 4L7 7M10 4L13 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M3 13V15C3 16.1046 3.89543 17 5 17H15C16.1046 17 17 16.1046 17 15V13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                    <span id="fileName">Choose file or drag here</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Error Display -->
+                        <div id="errorMessage" class="error-message" style="display: none;">
+                            <svg class="error-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="2"/>
+                                <path d="M8 4V8M8 11V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            <span id="errorText"></span>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="button-group">
+                            <button id="analyzeBtn" class="btn-primary" disabled>
+                                <svg class="btn-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M8 2V8M8 8L11 5M8 8L5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M14 8C14 11.3137 11.3137 14 8 14C4.68629 14 2 11.3137 2 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                Analyze PR
+                            </button>
+                            <button id="clearBtn" class="btn-secondary">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading State -->
+            <section id="loadingSection" class="loading-section" style="display: none;">
+                <div class="loading-card">
+                    <div class="spinner"></div>
+                    <p class="loading-text">Analyzing your pull request...</p>
+                    <p class="loading-subtext">This may take a few moments</p>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <svg class="title-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M10 2L3 6V14L10 18L17 14V6L10 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            CodeGuard AI Analysis
+                        </h3>
+                        <div class="header-actions">
+                            <button id="copyResultsBtn" class="btn-icon-only" title="Copy results">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <rect x="5" y="5" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M3 11V3C3 2.44772 3.44772 2 4 2H11" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </button>
+                            <button id="newAnalysisBtn" class="btn-secondary">New Analysis</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- PR Comment Format -->
+                        <div class="pr-comment">
+                            <!-- Risk Summary -->
+                            <div class="risk-summary">
+                                <div class="risk-header">
+                                    <h4>Risk Assessment</h4>
+                                    <div id="riskBadge" class="risk-badge"></div>
+                                </div>
+                                <div id="riskDescription" class="risk-description"></div>
+                                <div class="risk-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Files Analyzed:</span>
+                                        <span id="filesCount" class="stat-value">0</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total Findings:</span>
+                                        <span id="findingsCount" class="stat-value">0</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Risk Score:</span>
+                                        <span id="riskScore" class="stat-value">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Findings Sections -->
+                            <div id="findingsContainer" class="findings-container">
+                                <!-- Security Findings -->
+                                <div id="securitySection" class="findings-section" style="display: none;">
+                                    <button class="section-toggle">
+                                        <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="section-title">
+                                            🔒 Security Issues
+                                            <span id="securityCount" class="count-badge">0</span>
+                                        </span>
+                                    </button>
+                                    <div class="section-content">
+                                        <ul id="securityList" class="findings-list"></ul>
+                                    </div>
+                                </div>
+
+                                <!-- Complexity Findings -->
+                                <div id="complexitySection" class="findings-section" style="display: none;">
+                                    <button class="section-toggle">
+                                        <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="section-title">
+                                            🧩 Complexity Issues
+                                            <span id="complexityCount" class="count-badge">0</span>
+                                        </span>
+                                    </button>
+                                    <div class="section-content">
+                                        <ul id="complexityList" class="findings-list"></ul>
+                                    </div>
+                                </div>
+
+                                <!-- Performance Findings -->
+                                <div id="performanceSection" class="findings-section" style="display: none;">
+                                    <button class="section-toggle">
+                                        <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                            <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="section-title">
+                                            ⚡ Performance Concerns
+                                            <span id="performanceCount" class="count-badge">0</span>
+                                        </span>
+                                    </button>
+                                    <div class="section-content">
+                                        <ul id="performanceList" class="findings-list"></ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- No Issues Message -->
+                            <div id="noIssuesMessage" class="no-issues" style="display: none;">
+                                <svg class="success-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                    <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M14 24L20 30L34 16" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <h4>All Clear! ✨</h4>
+                                <p>No security, complexity, or performance issues detected in this PR.</p>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="pr-footer">
+                                <p>
+                                    <svg class="footer-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                        <path d="M7 1L2 4V10L7 13L12 10V4L7 1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                                    </svg>
+                                    Generated by <strong>CodeGuard AI</strong> • 
+                                    <span id="timestamp"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 CodeGuard AI. Intelligent code analysis for safer pull requests.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
