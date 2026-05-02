@@ -99,7 +99,7 @@
   },
   "optionalDependencies": {
     "opossum": "^8.5.0",
-    "p-retry": "^5.1.2"
+    "p-retry": "^8.0.0"
   },
   "directories": {
     "example": "examples",
