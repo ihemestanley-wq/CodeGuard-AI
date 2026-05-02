@@ -1,5 +1,5 @@
 # CodeGuard AI - Production Dockerfile
-FROM node:18-alpine AS base
+FROM node:25-alpine AS base
 
 # Install security updates
 RUN apk update && apk upgrade && \
