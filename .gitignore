@@ -26,7 +26,6 @@ coverage/
 .jest/
 
 # Build output
-dist/
 build/
 *.tsbuildinfo
 

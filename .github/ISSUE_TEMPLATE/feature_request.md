@@ -1,139 +1,70 @@
 ---
 name: Feature Request
-about: Suggest an idea for CodeGuard AI
+about: Suggest a new feature or enhancement for CodeGuard AI
 title: '[FEATURE] '
-labels: enhancement
+labels: ['enhancement', 'needs-triage']
 assignees: ''
 ---
 
 ## Feature Description
-
 <!-- A clear and concise description of the feature you'd like to see -->
 
-## Problem Statement
 
-<!-- Is your feature request related to a problem? Please describe. -->
-<!-- Example: I'm always frustrated when [...] -->
+
+## Problem Statement
+<!-- What problem does this feature solve? -->
+<!-- Example: "I'm always frustrated when..." or "It would be helpful if..." -->
+
+
 
 ## Proposed Solution
+<!-- Describe how you envision this feature working -->
+<!-- Be as detailed as possible about the expected behavior and user experience -->
 
-<!-- Describe the solution you'd like -->
 
-## Alternative Solutions
 
-<!-- Describe any alternative solutions or features you've considered -->
+## Alternatives Considered
+<!-- Have you considered any alternative solutions or features? -->
+<!-- What are the pros and cons of each approach? -->
+
+
 
 ## Use Cases
+<!-- Describe real-world scenarios where this feature would be useful -->
 
-<!-- Describe specific use cases for this feature -->
+**Use Case 1:**
 
-1. **Use Case 1:**
-   - As a [type of user]
-   - I want to [action]
-   - So that [benefit]
 
-2. **Use Case 2:**
-   - As a [type of user]
-   - I want to [action]
-   - So that [benefit]
+**Use Case 2:**
 
-## Examples
 
-<!-- Provide examples of how this feature would work -->
+**Use Case 3:**
 
-**Example 1:**
-```javascript
-// Code example showing how the feature would be used
-```
 
-**Example 2:**
-```bash
-# CLI example
-```
+## Implementation Details
+<!-- Optional: Technical considerations, architecture suggestions, or implementation notes -->
+<!-- This section is helpful if you have technical insights to share -->
 
-## Benefits
 
-<!-- What are the benefits of implementing this feature? -->
-
-- 
-- 
-- 
-
-## Potential Drawbacks
-
-<!-- Are there any potential drawbacks or concerns? -->
-
-- 
-- 
-
-## Implementation Suggestions
-
-<!-- If you have ideas on how to implement this, please share -->
-
-### Technical Approach
-
-<!-- Describe the technical approach if you have one in mind -->
-
-### Files to Modify
-
-<!-- List files that might need to be modified -->
-
-- 
-- 
-
-### Dependencies
-
-<!-- List any new dependencies that might be needed -->
-
-- 
-- 
-
-## Priority
-
-<!-- How important is this feature to you? -->
-
-- [ ] Critical - Blocking my use of CodeGuard AI
-- [ ] High - Would significantly improve my workflow
-- [ ] Medium - Nice to have
-- [ ] Low - Minor improvement
-
-## Willingness to Contribute
-
-<!-- Are you willing to help implement this feature? -->
-
-- [ ] I can implement this feature myself and submit a PR
-- [ ] I can help with testing
-- [ ] I can help with documentation
-- [ ] I can provide feedback during development
-- [ ] I can only suggest the idea
-
-## Similar Features
-
-<!-- Are there similar features in other tools? Please provide examples -->
-
-**Tool 1:**
-<!-- Description and link -->
-
-**Tool 2:**
-<!-- Description and link -->
 
 ## Additional Context
+<!-- Add any other context, screenshots, mockups, or examples about the feature request -->
+<!-- Links to similar features in other tools can be helpful -->
 
-<!-- Add any other context, mockups, or screenshots about the feature request here -->
 
-## Related Issues
 
-<!-- Link to related issues if any -->
+## Priority
+<!-- How important is this feature to you? -->
+
+- [ ] Low - Nice to have
+- [ ] Medium - Would improve workflow
+- [ ] High - Significantly impacts productivity
+- [ ] Critical - Blocking current work
 
 ## Checklist
+<!-- Please check the following before submitting -->
 
-- [ ] I have searched for similar feature requests
-- [ ] I have read the [documentation](../README.md)
-- [ ] I have checked the [roadmap](../README.md#roadmap)
-- [ ] This feature aligns with the project's goals
-- [ ] I have provided clear use cases
-- [ ] I have considered potential drawbacks
-
----
-
-<!-- Thank you for helping improve CodeGuard AI! -->
+- [ ] I have searched existing issues to ensure this feature hasn't been requested
+- [ ] I have provided clear use cases for this feature
+- [ ] I have considered potential alternatives
+- [ ] This feature aligns with CodeGuard AI's core mission of code security analysis
