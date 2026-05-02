@@ -17,7 +17,7 @@ function validateAnalyzeRequest(req, res, next) {
     if (!diffContent) {
       return res.status(400).json({
         success: false,
-        error: 'Missing required field: diffContent'
+        error: 'Missing required field: diffContent',
       });
     }
 
@@ -25,7 +25,7 @@ function validateAnalyzeRequest(req, res, next) {
     if (typeof diffContent !== 'string') {
       return res.status(400).json({
         success: false,
-        error: 'diffContent must be a string'
+        error: 'diffContent must be a string',
       });
     }
 
@@ -33,7 +33,7 @@ function validateAnalyzeRequest(req, res, next) {
     if (diffContent.trim().length === 0) {
       return res.status(400).json({
         success: false,
-        error: 'diffContent cannot be empty'
+        error: 'diffContent cannot be empty',
       });
     }
 
@@ -42,7 +42,7 @@ function validateAnalyzeRequest(req, res, next) {
     if (sizeInBytes > config.upload.maxDiffSize) {
       return res.status(413).json({
         success: false,
-        error: `Diff content exceeds maximum size of ${config.upload.maxDiffSize / (1024 * 1024)}MB`
+        error: `Diff content exceeds maximum size of ${config.upload.maxDiffSize / (1024 * 1024)}MB`,
       });
     }
 
@@ -51,7 +51,7 @@ function validateAnalyzeRequest(req, res, next) {
   } catch (error) {
     return res.status(400).json({
       success: false,
-      error: 'Invalid request format'
+      error: 'Invalid request format',
     });
   }
 }
@@ -63,7 +63,7 @@ function validateRequestBody(req, res, next) {
   if (!req.body || Object.keys(req.body).length === 0) {
     return res.status(400).json({
       success: false,
-      error: 'Request body is required'
+      error: 'Request body is required',
     });
   }
   next();
@@ -71,7 +71,7 @@ function validateRequestBody(req, res, next) {
 
 module.exports = {
   validateAnalyzeRequest,
-  validateRequestBody
+  validateRequestBody,
 };
 
 // Made with Bob

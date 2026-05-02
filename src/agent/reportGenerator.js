@@ -20,9 +20,11 @@ function formatTimestamp() {
  * @returns {string} Executive summary section
  */
 function generateExecutiveSummary(riskAssessment) {
-  const { score, level, components, metadata } = riskAssessment;
+  const {
+    score, level, components, metadata,
+  } = riskAssessment;
   const emoji = getRiskLevelEmoji(level);
-  
+
   return `
 ═══════════════════════════════════════════════════════════════════════════
                         CODEGUARD AI ANALYSIS REPORT
@@ -59,10 +61,10 @@ function generateSecurityFindings(securityFindings) {
 `;
   }
 
-  const critical = securityFindings.filter(f => f.severity === 'critical');
-  const high = securityFindings.filter(f => f.severity === 'high');
-  const medium = securityFindings.filter(f => f.severity === 'medium');
-  const low = securityFindings.filter(f => f.severity === 'low');
+  const critical = securityFindings.filter((f) => f.severity === 'critical');
+  const high = securityFindings.filter((f) => f.severity === 'high');
+  const medium = securityFindings.filter((f) => f.severity === 'medium');
+  const low = securityFindings.filter((f) => f.severity === 'low');
 
   let section = `
 2. SECURITY FINDINGS
@@ -128,7 +130,7 @@ function generateComplexityAnalysis(complexityIssues) {
  */
 function generateFileCriticality(fileCriticalityRisk) {
   const { breakdown } = fileCriticalityRisk;
-  
+
   let section = `
 4. FILE CRITICALITY ASSESSMENT
 📂 Critical Files: ${breakdown.critical.length}
@@ -140,7 +142,7 @@ function generateFileCriticality(fileCriticalityRisk) {
 
   if (breakdown.critical.length > 0) {
     section += 'CRITICAL FILES:\n';
-    breakdown.critical.forEach(file => {
+    breakdown.critical.forEach((file) => {
       section += `  🚨 ${file}\n`;
     });
     section += '\n';
@@ -148,7 +150,7 @@ function generateFileCriticality(fileCriticalityRisk) {
 
   if (breakdown.high.length > 0) {
     section += 'HIGH PRIORITY FILES:\n';
-    breakdown.high.forEach(file => {
+    breakdown.high.forEach((file) => {
       section += `  ⚠️  ${file}\n`;
     });
     section += '\n';
@@ -164,12 +166,12 @@ function generateFileCriticality(fileCriticalityRisk) {
  */
 function generateChangeMagnitude(changeMagnitude) {
   const { level, totalChanges } = changeMagnitude;
-  
+
   let emoji = '📝';
   if (level === 'massive') emoji = '🔥';
   else if (level === 'large') emoji = '📊';
   else if (level === 'medium') emoji = '📈';
-  
+
   return `
 5. CHANGE MAGNITUDE
 ${emoji} Change Level: ${level.toUpperCase()}
@@ -212,7 +214,7 @@ function generateSemanticPatterns(patternRisk) {
     logging: '📝 Logging Changes - Observability modifications',
   };
 
-  patternRisk.patterns.forEach(pattern => {
+  patternRisk.patterns.forEach((pattern) => {
     section += `  ${patternDescriptions[pattern] || `• ${pattern}`}\n`;
   });
 
@@ -397,7 +399,7 @@ function generateMonitoringRequirements(riskAssessment) {
  */
 function generateRollbackPlan(riskAssessment) {
   const { level, components } = riskAssessment;
-  
+
   let section = `
 10. ROLLBACK PLAN
 
@@ -458,7 +460,7 @@ ROLLBACK PROCEDURE:
  */
 function generateApprovalRequirements(riskAssessment) {
   const { level, components } = riskAssessment;
-  
+
   let section = `
 11. APPROVAL REQUIREMENTS
 
@@ -535,19 +537,18 @@ ADDITIONAL REQUIREMENTS:
 function generateReport(riskAssessment, analysisResults) {
   const startTime = Date.now();
 
-  const report = 
-    generateExecutiveSummary(riskAssessment) +
-    generateSecurityFindings(analysisResults.securityFindings || []) +
-    generateComplexityAnalysis(analysisResults.complexityIssues || []) +
-    generateFileCriticality(riskAssessment.components.fileCriticality) +
-    generateChangeMagnitude(riskAssessment.components.changeMagnitude) +
-    generateSemanticPatterns(riskAssessment.components.patterns) +
-    generateRecommendations(riskAssessment) +
-    generateTestingRequirements(riskAssessment) +
-    generateMonitoringRequirements(riskAssessment) +
-    generateRollbackPlan(riskAssessment) +
-    generateApprovalRequirements(riskAssessment) +
-    `
+  const report = `${generateExecutiveSummary(riskAssessment)
+    + generateSecurityFindings(analysisResults.securityFindings || [])
+    + generateComplexityAnalysis(analysisResults.complexityIssues || [])
+    + generateFileCriticality(riskAssessment.components.fileCriticality)
+    + generateChangeMagnitude(riskAssessment.components.changeMagnitude)
+    + generateSemanticPatterns(riskAssessment.components.patterns)
+    + generateRecommendations(riskAssessment)
+    + generateTestingRequirements(riskAssessment)
+    + generateMonitoringRequirements(riskAssessment)
+    + generateRollbackPlan(riskAssessment)
+    + generateApprovalRequirements(riskAssessment)
+  }
 ═══════════════════════════════════════════════════════════════════════════
                           END OF REPORT
 ═══════════════════════════════════════════════════════════════════════════

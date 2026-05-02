@@ -20,15 +20,17 @@ const customFormat = winston.format.combine(
   winston.format.errors({ stack: true }),
   winston.format.splat(),
   winston.format.json(),
-  winston.format.printf(({ timestamp, level, message, ...metadata }) => {
+  winston.format.printf(({
+    timestamp, level, message, ...metadata
+  }) => {
     let msg = `${timestamp} [${level.toUpperCase()}]: ${message}`;
-    
+
     if (Object.keys(metadata).length > 0) {
       msg += ` ${JSON.stringify(metadata)}`;
     }
-    
+
     return msg;
-  })
+  }),
 );
 
 // Create logger instance
@@ -41,7 +43,7 @@ const logger = winston.createLogger({
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        customFormat
+        customFormat,
       ),
     }),
     // File transport for errors
@@ -114,7 +116,7 @@ function createChildLogger(context) {
     info: (message, metadata = {}) => info(message, { ...context, ...metadata }),
     warn: (message, metadata = {}) => warn(message, { ...context, ...metadata }),
     error: (message, error = {}) => {
-      const errorData = error instanceof Error 
+      const errorData = error instanceof Error
         ? { error: error.message, stack: error.stack }
         : error;
       logger.error(message, { ...context, ...errorData });

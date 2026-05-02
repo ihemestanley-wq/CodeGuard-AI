@@ -5,7 +5,7 @@
 
 const {
   validateAnalyzeRequest,
-  validateRequestBody
+  validateRequestBody,
 } = require('../../../src/web/middleware/validation');
 const config = require('../../../src/web/config');
 
@@ -19,13 +19,13 @@ describe('Validation Middleware', () => {
     mockReq = {
       body: {},
       headers: {},
-      ip: '127.0.0.1'
+      ip: '127.0.0.1',
     };
 
     // Mock Express response
     mockRes = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis()
+      json: jest.fn().mockReturnThis(),
     };
 
     // Mock next function
@@ -36,7 +36,7 @@ describe('Validation Middleware', () => {
     describe('Diff Content Validation', () => {
       test('should pass validation with valid diffContent', () => {
         mockReq.body = {
-          diffContent: 'diff --git a/file.js b/file.js\n+added line'
+          diffContent: 'diff --git a/file.js b/file.js\n+added line',
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -53,14 +53,14 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'Missing required field: diffContent'
+          error: 'Missing required field: diffContent',
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
       test('should reject request with null diffContent', () => {
         mockReq.body = {
-          diffContent: null
+          diffContent: null,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -68,14 +68,14 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'Missing required field: diffContent'
+          error: 'Missing required field: diffContent',
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
       test('should reject request with undefined diffContent', () => {
         mockReq.body = {
-          diffContent: undefined
+          diffContent: undefined,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -83,7 +83,7 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'Missing required field: diffContent'
+          error: 'Missing required field: diffContent',
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
@@ -92,7 +92,7 @@ describe('Validation Middleware', () => {
     describe('Content Type Validation', () => {
       test('should reject non-string diffContent', () => {
         mockReq.body = {
-          diffContent: 12345
+          diffContent: 12345,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -100,14 +100,14 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'diffContent must be a string'
+          error: 'diffContent must be a string',
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
       test('should reject object diffContent', () => {
         mockReq.body = {
-          diffContent: { diff: 'content' }
+          diffContent: { diff: 'content' },
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -115,14 +115,14 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'diffContent must be a string'
+          error: 'diffContent must be a string',
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
       test('should reject array diffContent', () => {
         mockReq.body = {
-          diffContent: ['diff', 'content']
+          diffContent: ['diff', 'content'],
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -130,14 +130,14 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'diffContent must be a string'
+          error: 'diffContent must be a string',
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
       test('should reject boolean diffContent', () => {
         mockReq.body = {
-          diffContent: true
+          diffContent: true,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -145,7 +145,7 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'diffContent must be a string'
+          error: 'diffContent must be a string',
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
@@ -154,7 +154,7 @@ describe('Validation Middleware', () => {
     describe('Empty Content Validation', () => {
       test('should reject empty string diffContent', () => {
         mockReq.body = {
-          diffContent: ''
+          diffContent: '',
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -162,14 +162,14 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'Missing required field: diffContent'
+          error: 'Missing required field: diffContent',
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
       test('should reject whitespace-only diffContent', () => {
         mockReq.body = {
-          diffContent: '   \n\t  '
+          diffContent: '   \n\t  ',
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -177,14 +177,14 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'diffContent cannot be empty'
+          error: 'diffContent cannot be empty',
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
 
       test('should accept diffContent with leading/trailing whitespace but valid content', () => {
         mockReq.body = {
-          diffContent: '  diff --git a/file.js  \n'
+          diffContent: '  diff --git a/file.js  \n',
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -198,7 +198,7 @@ describe('Validation Middleware', () => {
       test('should accept diffContent within size limit', () => {
         const validContent = 'a'.repeat(1000); // 1KB
         mockReq.body = {
-          diffContent: validContent
+          diffContent: validContent,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -211,7 +211,7 @@ describe('Validation Middleware', () => {
         const maxSize = config.upload.maxDiffSize;
         const validContent = 'a'.repeat(maxSize);
         mockReq.body = {
-          diffContent: validContent
+          diffContent: validContent,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -224,7 +224,7 @@ describe('Validation Middleware', () => {
         const maxSize = config.upload.maxDiffSize;
         const oversizedContent = 'a'.repeat(maxSize + 1);
         mockReq.body = {
-          diffContent: oversizedContent
+          diffContent: oversizedContent,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -232,7 +232,7 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(413);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: `Diff content exceeds maximum size of ${maxSize / (1024 * 1024)}MB`
+          error: `Diff content exceeds maximum size of ${maxSize / (1024 * 1024)}MB`,
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
@@ -241,14 +241,14 @@ describe('Validation Middleware', () => {
         // UTF-8 multi-byte characters
         const unicodeContent = '🔥'.repeat(1000); // Each emoji is 4 bytes
         mockReq.body = {
-          diffContent: unicodeContent
+          diffContent: unicodeContent,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
 
         const expectedSize = Buffer.byteLength(unicodeContent, 'utf8');
         expect(expectedSize).toBeGreaterThan(1000); // More than 1 byte per character
-        
+
         if (expectedSize > config.upload.maxDiffSize) {
           expect(mockRes.status).toHaveBeenCalledWith(413);
         } else {
@@ -257,9 +257,9 @@ describe('Validation Middleware', () => {
       });
 
       test('should handle large valid diff content', () => {
-        const largeValidContent = 'diff --git a/file.js\n' + '+line\n'.repeat(10000);
+        const largeValidContent = `diff --git a/file.js\n${'+line\n'.repeat(10000)}`;
         mockReq.body = {
-          diffContent: largeValidContent
+          diffContent: largeValidContent,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -279,7 +279,7 @@ describe('Validation Middleware', () => {
         mockReq.body = {
           get diffContent() {
             throw new Error('Property access error');
-          }
+          },
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -287,7 +287,7 @@ describe('Validation Middleware', () => {
         expect(mockRes.status).toHaveBeenCalledWith(400);
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'Invalid request format'
+          error: 'Invalid request format',
         });
         expect(mockNext).not.toHaveBeenCalled();
       });
@@ -300,8 +300,8 @@ describe('Validation Middleware', () => {
         expect(mockRes.json).toHaveBeenCalledWith(
           expect.objectContaining({
             success: false,
-            error: expect.any(String)
-          })
+            error: expect.any(String),
+          }),
         );
       });
 
@@ -309,14 +309,14 @@ describe('Validation Middleware', () => {
         mockReq.body = {
           get diffContent() {
             throw new Error('Internal database connection failed');
-          }
+          },
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
 
         expect(mockRes.json).toHaveBeenCalledWith({
           success: false,
-          error: 'Invalid request format'
+          error: 'Invalid request format',
         });
       });
     });
@@ -332,7 +332,7 @@ index 1234567..abcdefg 100644
  function test() {
 +  console.log('new line');
    return true;
- }`
+ }`,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -349,7 +349,7 @@ index 1234567..abcdefg 100644
  function test() {
 +  console.log('new line');
    return true;
- }`
+ }`,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -363,7 +363,7 @@ index 1234567..abcdefg 100644
           diffContent: `diff --git a/file1.js b/file1.js
 +added line
 diff --git a/file2.js b/file2.js
-+another line`
++another line`,
         };
 
         validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -377,7 +377,7 @@ diff --git a/file2.js b/file2.js
   describe('validateRequestBody', () => {
     test('should pass validation with non-empty request body', () => {
       mockReq.body = {
-        diffContent: 'some content'
+        diffContent: 'some content',
       };
 
       validateRequestBody(mockReq, mockRes, mockNext);
@@ -394,7 +394,7 @@ diff --git a/file2.js b/file2.js
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
         success: false,
-        error: 'Request body is required'
+        error: 'Request body is required',
       });
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -407,7 +407,7 @@ diff --git a/file2.js b/file2.js
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
         success: false,
-        error: 'Request body is required'
+        error: 'Request body is required',
       });
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -420,7 +420,7 @@ diff --git a/file2.js b/file2.js
       expect(mockRes.status).toHaveBeenCalledWith(400);
       expect(mockRes.json).toHaveBeenCalledWith({
         success: false,
-        error: 'Request body is required'
+        error: 'Request body is required',
       });
       expect(mockNext).not.toHaveBeenCalled();
     });
@@ -429,7 +429,7 @@ diff --git a/file2.js b/file2.js
       mockReq.body = {
         diffContent: 'content',
         metadata: { author: 'test' },
-        options: { verbose: true }
+        options: { verbose: true },
       };
 
       validateRequestBody(mockReq, mockRes, mockNext);
@@ -440,7 +440,7 @@ diff --git a/file2.js b/file2.js
 
     test('should accept body with any valid field', () => {
       mockReq.body = {
-        anyField: 'value'
+        anyField: 'value',
       };
 
       validateRequestBody(mockReq, mockRes, mockNext);
@@ -468,7 +468,7 @@ diff --git a/file2.js b/file2.js
 
     test('should chain middleware correctly', () => {
       mockReq.body = {
-        diffContent: 'valid content'
+        diffContent: 'valid content',
       };
 
       // First middleware
@@ -508,7 +508,7 @@ diff --git a/file2.js b/file2.js
     test('should handle very long single line', () => {
       const longLine = 'a'.repeat(10000);
       mockReq.body = {
-        diffContent: longLine
+        diffContent: longLine,
       };
 
       validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -523,7 +523,7 @@ diff --git a/file2.js b/file2.js
 
     test('should handle special characters in diff', () => {
       mockReq.body = {
-        diffContent: 'diff --git\n+line with special chars: @#$%^&*()'
+        diffContent: 'diff --git\n+line with special chars: @#$%^&*()',
       };
 
       validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -534,7 +534,7 @@ diff --git a/file2.js b/file2.js
 
     test('should handle newline variations', () => {
       mockReq.body = {
-        diffContent: 'diff\r\n+line1\n+line2\r\n+line3'
+        diffContent: 'diff\r\n+line1\n+line2\r\n+line3',
       };
 
       validateAnalyzeRequest(mockReq, mockRes, mockNext);
@@ -545,7 +545,7 @@ diff --git a/file2.js b/file2.js
 
     test('should handle tabs and spaces', () => {
       mockReq.body = {
-        diffContent: 'diff\n\t+indented line\n    +spaced line'
+        diffContent: 'diff\n\t+indented line\n    +spaced line',
       };
 
       validateAnalyzeRequest(mockReq, mockRes, mockNext);

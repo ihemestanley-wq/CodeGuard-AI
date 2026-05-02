@@ -22,7 +22,7 @@ const {
   helmetMiddleware,
   corsMiddleware,
   rateLimiter,
-  applySecurityMiddleware
+  applySecurityMiddleware,
 } = require('../../../src/web/middleware/security');
 
 describe('Security Middleware', () => {
@@ -38,7 +38,7 @@ describe('Security Middleware', () => {
     // Mock Express app
     mockApp = {
       use: jest.fn(),
-      disable: jest.fn()
+      disable: jest.fn(),
     };
 
     // Mock Express request
@@ -47,7 +47,7 @@ describe('Security Middleware', () => {
       path: '/api/analyze',
       method: 'POST',
       headers: {},
-      body: {}
+      body: {},
     };
 
     // Mock Express response
@@ -55,7 +55,7 @@ describe('Security Middleware', () => {
       status: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
       set: jest.fn().mockReturnThis(),
-      send: jest.fn().mockReturnThis()
+      send: jest.fn().mockReturnThis(),
     };
 
     // Mock next function
@@ -70,13 +70,13 @@ describe('Security Middleware', () => {
     });
 
     test('should apply helmet middleware with CSP directives', () => {
-      const helmetOptions = config.security.helmetOptions;
+      const { helmetOptions } = config.security;
       expect(helmetOptions.contentSecurityPolicy).toBeDefined();
       expect(helmetOptions.contentSecurityPolicy.directives).toMatchObject({
         defaultSrc: ["'self'"],
         styleSrc: ["'self'", "'unsafe-inline'"],
         scriptSrc: ["'self'"],
-        imgSrc: ["'self'", "data:", "https:"]
+        imgSrc: ["'self'", 'data:', 'https:'],
       });
     });
 
@@ -157,7 +157,7 @@ describe('Security Middleware', () => {
     test('should apply middleware in correct order', () => {
       applySecurityMiddleware(mockApp);
 
-      const calls = mockApp.use.mock.calls;
+      const { calls } = mockApp.use.mock;
       expect(calls[0][0]).toBe(helmetMiddleware);
       expect(calls[1][0]).toBe(corsMiddleware);
       expect(calls[2][0]).toBe(rateLimiter);
@@ -172,7 +172,7 @@ describe('Security Middleware', () => {
     test('should apply helmet before CORS', () => {
       applySecurityMiddleware(mockApp);
 
-      const calls = mockApp.use.mock.calls;
+      const { calls } = mockApp.use.mock;
       // First call should be helmet, second CORS, third rate limiter
       expect(calls.length).toBe(3);
       expect(calls[0][0]).toBe(helmetMiddleware);
@@ -182,7 +182,7 @@ describe('Security Middleware', () => {
     test('should apply CORS before rate limiting', () => {
       applySecurityMiddleware(mockApp);
 
-      const calls = mockApp.use.mock.calls;
+      const { calls } = mockApp.use.mock;
       // Second call should be CORS, third rate limiter
       expect(calls.length).toBe(3);
       expect(calls[1][0]).toBe(corsMiddleware);
@@ -193,7 +193,7 @@ describe('Security Middleware', () => {
   describe('Request Sanitization', () => {
     test('should prevent XSS attacks through helmet CSP', () => {
       const cspDirectives = config.security.helmetOptions.contentSecurityPolicy.directives;
-      
+
       // Verify script-src doesn't allow unsafe-inline or unsafe-eval
       expect(cspDirectives.scriptSrc).toEqual(["'self'"]);
       expect(cspDirectives.scriptSrc).not.toContain("'unsafe-inline'");
@@ -208,8 +208,8 @@ describe('Security Middleware', () => {
     test('should allow safe image sources', () => {
       const cspDirectives = config.security.helmetOptions.contentSecurityPolicy.directives;
       expect(cspDirectives.imgSrc).toContain("'self'");
-      expect(cspDirectives.imgSrc).toContain("data:");
-      expect(cspDirectives.imgSrc).toContain("https:");
+      expect(cspDirectives.imgSrc).toContain('data:');
+      expect(cspDirectives.imgSrc).toContain('https:');
     });
 
     test('should allow inline styles for UI compatibility', () => {

@@ -151,7 +151,7 @@ describe('RiskEngine', () => {
           'migrations/001_create_users.sql',
         ];
 
-        testFiles.forEach(filePath => {
+        testFiles.forEach((filePath) => {
           const criticality = determineFileCriticality(filePath);
           expect(['critical', 'high']).toContain(criticality);
         });
@@ -164,7 +164,7 @@ describe('RiskEngine', () => {
           'src/middleware/validator.js',
         ];
 
-        testFiles.forEach(filePath => {
+        testFiles.forEach((filePath) => {
           const criticality = determineFileCriticality(filePath);
           expect(['medium', 'high']).toContain(criticality);
         });
@@ -177,7 +177,7 @@ describe('RiskEngine', () => {
           '__tests__/integration.spec.js',
         ];
 
-        testFiles.forEach(filePath => {
+        testFiles.forEach((filePath) => {
           const criticality = determineFileCriticality(filePath);
           expect(criticality).toBe('low');
         });
@@ -192,7 +192,7 @@ describe('RiskEngine', () => {
     describe('Change Size Impact', () => {
       test('should assess small changes (< 50 lines)', () => {
         const result = calculateChangeMagnitude(30, 10);
-        
+
         expect(result.level).toBe('small');
         expect(result.score).toBe(WEIGHTS.changeMagnitude.small);
         expect(result.totalChanges).toBe(40);
@@ -200,7 +200,7 @@ describe('RiskEngine', () => {
 
       test('should assess medium changes (50-200 lines)', () => {
         const result = calculateChangeMagnitude(100, 50);
-        
+
         expect(result.level).toBe('medium');
         expect(result.score).toBe(WEIGHTS.changeMagnitude.medium);
         expect(result.totalChanges).toBe(150);
@@ -208,7 +208,7 @@ describe('RiskEngine', () => {
 
       test('should assess large changes (200-500 lines)', () => {
         const result = calculateChangeMagnitude(400, 200);
-        
+
         expect(result.level).toBe('large');
         expect(result.score).toBe(WEIGHTS.changeMagnitude.large);
         expect(result.totalChanges).toBe(600);
@@ -216,7 +216,7 @@ describe('RiskEngine', () => {
 
       test('should assess very large changes (> 500 lines)', () => {
         const result = calculateChangeMagnitude(800, 400);
-        
+
         expect(result.level).toBe('massive');
         expect(result.score).toBe(WEIGHTS.changeMagnitude.massive);
         expect(result.totalChanges).toBe(1200);
@@ -227,7 +227,7 @@ describe('RiskEngine', () => {
       test('should detect SQL injection patterns', () => {
         const code = 'SELECT * FROM users WHERE id = " + userId';
         const patterns = detectSemanticPatterns(code);
-        
+
         // SQL patterns are detected through database schema patterns
         expect(patterns).toBeDefined();
       });
@@ -235,7 +235,7 @@ describe('RiskEngine', () => {
       test('should detect XSS vulnerabilities', () => {
         const code = 'innerHTML = userInput;';
         const patterns = detectSemanticPatterns(code);
-        
+
         expect(patterns).toBeDefined();
         expect(Array.isArray(patterns)).toBe(true);
       });
@@ -243,56 +243,56 @@ describe('RiskEngine', () => {
       test('should detect authentication bypass patterns', () => {
         const code = 'passport.authenticate("local", { session: false })';
         const patterns = detectSemanticPatterns(code);
-        
+
         expect(patterns).toContain('authentication');
       });
 
       test('should detect hardcoded credentials', () => {
         const code = 'const password = "admin123";';
         const patterns = detectSemanticPatterns(code);
-        
+
         expect(patterns).toBeDefined();
       });
 
       test('should detect unsafe eval/exec usage', () => {
         const code = 'eval(userInput);';
         const patterns = detectSemanticPatterns(code);
-        
+
         expect(patterns).toBeDefined();
       });
 
       test('should detect path traversal attempts', () => {
         const code = 'fs.readFile("../../etc/passwd")';
         const patterns = detectSemanticPatterns(code);
-        
+
         expect(patterns).toBeDefined();
       });
 
       test('should detect database schema changes', () => {
         const code = 'CREATE TABLE users (id INT, name VARCHAR(255));';
         const patterns = detectSemanticPatterns(code);
-        
+
         expect(patterns).toContain('databaseSchema');
       });
 
       test('should detect API contract changes', () => {
         const code = 'app.post("/api/users", handler);';
         const patterns = detectSemanticPatterns(code);
-        
+
         expect(patterns).toContain('apiContract');
       });
 
       test('should detect authorization patterns', () => {
         const code = 'if (user.hasRole("admin")) { authorize(); }';
         const patterns = detectSemanticPatterns(code);
-        
+
         expect(patterns).toContain('authorization');
       });
 
       test('should detect data validation patterns', () => {
         const code = 'const schema = yup.object().shape({ email: yup.string() });';
         const patterns = detectSemanticPatterns(code);
-        
+
         expect(patterns).toContain('dataValidation');
       });
     });
@@ -546,7 +546,7 @@ describe('RiskEngine', () => {
         'src/oauth/provider.js',
       ];
 
-      files.forEach(file => {
+      files.forEach((file) => {
         expect(determineFileCriticality(file)).toBe('critical');
       });
     });
@@ -559,7 +559,7 @@ describe('RiskEngine', () => {
         'src/stripe/integration.js',
       ];
 
-      files.forEach(file => {
+      files.forEach((file) => {
         expect(determineFileCriticality(file)).toBe('critical');
       });
     });
@@ -572,7 +572,7 @@ describe('RiskEngine', () => {
         'src/roles/admin.js',
       ];
 
-      files.forEach(file => {
+      files.forEach((file) => {
         expect(determineFileCriticality(file)).toBe('critical');
       });
     });
@@ -584,7 +584,7 @@ describe('RiskEngine', () => {
         'src/entities/order.js',
       ];
 
-      files.forEach(file => {
+      files.forEach((file) => {
         const criticality = determineFileCriticality(file);
         expect(['high', 'medium']).toContain(criticality);
       });
@@ -597,7 +597,7 @@ describe('RiskEngine', () => {
         'src/routes/products.js',
       ];
 
-      files.forEach(file => {
+      files.forEach((file) => {
         const criticality = determineFileCriticality(file);
         expect(['high', 'critical']).toContain(criticality);
       });
@@ -610,7 +610,7 @@ describe('RiskEngine', () => {
         'settings/app.json',
       ];
 
-      files.forEach(file => {
+      files.forEach((file) => {
         expect(determineFileCriticality(file)).toBe('medium');
       });
     });
@@ -622,7 +622,7 @@ describe('RiskEngine', () => {
         'test/e2e/workflow.test.ts',
       ];
 
-      files.forEach(file => {
+      files.forEach((file) => {
         expect(determineFileCriticality(file)).toBe('low');
       });
     });
@@ -634,7 +634,7 @@ describe('RiskEngine', () => {
         'CONTRIBUTING.txt',
       ];
 
-      files.forEach(file => {
+      files.forEach((file) => {
         expect(determineFileCriticality(file)).toBe('low');
       });
     });
@@ -792,7 +792,7 @@ describe('RiskEngine', () => {
       const result = calculatePatternRisk(changes);
 
       // Should only count databaseSchema once
-      expect(result.patterns.filter(p => p === 'databaseSchema').length).toBe(1);
+      expect(result.patterns.filter((p) => p === 'databaseSchema').length).toBe(1);
     });
   });
 

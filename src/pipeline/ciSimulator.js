@@ -73,11 +73,11 @@ function setGitHubOutput(name, value) {
 function createGitHubAnnotation(level, message, options = {}) {
   const { file, line, title } = options;
   let annotation = `::${level}`;
-  
+
   if (file) annotation += ` file=${file}`;
   if (line) annotation += `,line=${line}`;
   if (title) annotation += `,title=${title}`;
-  
+
   annotation += `::${message}`;
   console.log(annotation);
 }
@@ -100,27 +100,29 @@ function setGitHubSummary(summary) {
  * @returns {string} Markdown summary
  */
 function generateGitHubSummary(decision, riskAssessment) {
-  const { decision: type, riskScore, riskLevel, confidence } = decision;
-  
+  const {
+    decision: type, riskScore, riskLevel, confidence,
+  } = decision;
+
   let emoji = '✅';
   if (type === DECISIONS.BLOCK) emoji = '🚫';
   else if (type === DECISIONS.REQUIRE_APPROVAL) emoji = '⏸️';
 
   let summary = `# ${emoji} CodeGuard AI Analysis\n\n`;
-  
+
   summary += `## Decision: ${type}\n\n`;
-  summary += `| Metric | Value |\n`;
-  summary += `|--------|-------|\n`;
+  summary += '| Metric | Value |\n';
+  summary += '|--------|-------|\n';
   summary += `| Risk Score | ${riskScore.toFixed(1)}/100 |\n`;
   summary += `| Risk Level | ${riskLevel} |\n`;
-  
+
   if (confidence !== undefined) {
     summary += `| Confidence | ${confidence.toFixed(1)}% |\n`;
   }
-  
-  summary += `\n## Risk Breakdown\n\n`;
-  summary += `| Component | Score |\n`;
-  summary += `|-----------|-------|\n`;
+
+  summary += '\n## Risk Breakdown\n\n';
+  summary += '| Component | Score |\n';
+  summary += '|-----------|-------|\n';
   summary += `| Security | ${riskAssessment.components.security.score.toFixed(1)} |\n`;
   summary += `| Complexity | ${riskAssessment.components.complexity.score.toFixed(1)} |\n`;
   summary += `| File Criticality | ${riskAssessment.components.fileCriticality.score.toFixed(1)} |\n`;
@@ -128,11 +130,11 @@ function generateGitHubSummary(decision, riskAssessment) {
   summary += `| Patterns | ${riskAssessment.components.patterns.score.toFixed(1)} |\n`;
 
   if (type === DECISIONS.BLOCK) {
-    summary += `\n## ⚠️ Deployment Blocked\n\n`;
+    summary += '\n## ⚠️ Deployment Blocked\n\n';
     summary += `**Reason:** ${decision.reason}\n\n`;
-    
+
     if (decision.blockingFindings && decision.blockingFindings.length > 0) {
-      summary += `### Blocking Issues\n\n`;
+      summary += '### Blocking Issues\n\n';
       decision.blockingFindings.forEach((finding, i) => {
         summary += `${i + 1}. **[${finding.severity.toUpperCase()}]** ${finding.type}\n`;
         summary += `   - File: \`${finding.file}:${finding.line}\`\n`;
@@ -140,30 +142,30 @@ function generateGitHubSummary(decision, riskAssessment) {
       });
     }
   } else if (type === DECISIONS.REQUIRE_APPROVAL) {
-    summary += `\n## 👥 Approval Required\n\n`;
+    summary += '\n## 👥 Approval Required\n\n';
     summary += `**Reason:** ${decision.reason}\n\n`;
-    
+
     if (decision.requiredApprovers && decision.requiredApprovers.length > 0) {
-      summary += `### Required Approvers\n\n`;
-      decision.requiredApprovers.forEach(approver => {
+      summary += '### Required Approvers\n\n';
+      decision.requiredApprovers.forEach((approver) => {
         summary += `- ${approver}\n`;
       });
-      summary += `\n`;
+      summary += '\n';
     }
-    
+
     if (decision.deploymentConditions && decision.deploymentConditions.length > 0) {
-      summary += `### Deployment Conditions\n\n`;
-      decision.deploymentConditions.forEach(condition => {
+      summary += '### Deployment Conditions\n\n';
+      decision.deploymentConditions.forEach((condition) => {
         summary += `- [ ] ${condition}\n`;
       });
     }
   } else {
-    summary += `\n## ✅ Auto-Approved\n\n`;
+    summary += '\n## ✅ Auto-Approved\n\n';
     summary += `**Reason:** ${decision.reason}\n\n`;
-    
+
     if (decision.recommendations && decision.recommendations.length > 0) {
-      summary += `### Recommendations\n\n`;
-      decision.recommendations.forEach(rec => {
+      summary += '### Recommendations\n\n';
+      decision.recommendations.forEach((rec) => {
         summary += `- ${rec}\n`;
       });
     }
@@ -177,11 +179,11 @@ function generateGitHubSummary(decision, riskAssessment) {
  * @param {Array<Object>} securityFindings - Security findings
  */
 function createSecurityAnnotations(securityFindings) {
-  securityFindings.forEach(finding => {
-    const level = finding.severity === 'critical' || finding.severity === 'high' 
-      ? 'error' 
+  securityFindings.forEach((finding) => {
+    const level = finding.severity === 'critical' || finding.severity === 'high'
+      ? 'error'
       : 'warning';
-    
+
     createGitHubAnnotation(level, finding.message, {
       file: finding.file,
       line: finding.line,
@@ -203,7 +205,7 @@ function processGitHubActions(decision, riskAssessment, analysisResults) {
   setGitHubOutput('decision', decision.decision);
   setGitHubOutput('risk_score', decision.riskScore.toFixed(1));
   setGitHubOutput('risk_level', decision.riskLevel);
-  
+
   if (decision.confidence !== undefined) {
     setGitHubOutput('confidence', decision.confidence.toFixed(1));
   }

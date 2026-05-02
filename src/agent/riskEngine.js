@@ -14,30 +14,30 @@ const WEIGHTS = {
     medium: 15,
     low: 5,
   },
-  
+
   // Code complexity
   complexity: {
     high: 20,
     medium: 10,
     low: 5,
   },
-  
+
   // Change magnitude
   changeMagnitude: {
-    massive: 25,      // >1000 lines
-    large: 15,        // 500-1000 lines
-    medium: 8,        // 100-500 lines
-    small: 3,         // <100 lines
+    massive: 25, // >1000 lines
+    large: 15, // 500-1000 lines
+    medium: 8, // 100-500 lines
+    small: 3, // <100 lines
   },
-  
+
   // File criticality
   fileCriticality: {
-    critical: 20,     // auth, payment, security
-    high: 12,         // core business logic
-    medium: 6,        // utilities, helpers
-    low: 2,           // tests, docs
+    critical: 20, // auth, payment, security
+    high: 12, // core business logic
+    medium: 6, // utilities, helpers
+    low: 2, // tests, docs
   },
-  
+
   // Change patterns
   patterns: {
     databaseSchema: 15,
@@ -247,7 +247,7 @@ function calculateSecurityRisk(securityFindings) {
   for (const finding of securityFindings) {
     const severity = finding.severity || 'medium';
     const weight = WEIGHTS.security[severity] || WEIGHTS.security.medium;
-    
+
     score += weight;
     breakdown[severity]++;
 
@@ -279,7 +279,7 @@ function calculateComplexityRisk(complexityIssues) {
 
   for (const issue of complexityIssues) {
     const complexity = issue.complexity || 0;
-    
+
     let level;
     let weight;
 
@@ -322,7 +322,7 @@ function calculateFileCriticalityRisk(files) {
   for (const file of files) {
     const criticality = determineFileCriticality(file.path);
     const weight = WEIGHTS.fileCriticality[criticality];
-    
+
     score += weight;
     breakdown[criticality].push(file.path);
   }
@@ -345,7 +345,7 @@ function calculatePatternRisk(codeChanges) {
 
   for (const change of codeChanges) {
     const patterns = detectSemanticPatterns(change.code);
-    
+
     for (const pattern of patterns) {
       detectedPatterns.add(pattern);
       score += WEIGHTS.patterns[pattern] || 0;
@@ -373,22 +373,21 @@ function calculateRiskScore(analysisResults, parsedDiff, codeChanges) {
   const securityRisk = calculateSecurityRisk(analysisResults.securityFindings || []);
   const complexityRisk = calculateComplexityRisk(analysisResults.complexityIssues || []);
   const fileCriticalityRisk = calculateFileCriticalityRisk(parsedDiff);
-  
+
   // Calculate change magnitude
   const totalAdditions = parsedDiff.reduce((sum, f) => sum + f.additions, 0);
   const totalDeletions = parsedDiff.reduce((sum, f) => sum + f.deletions, 0);
   const changeMagnitude = calculateChangeMagnitude(totalAdditions, totalDeletions);
-  
+
   // Calculate semantic pattern risk
   const patternRisk = calculatePatternRisk(codeChanges);
 
   // Calculate total risk score
-  const totalScore = 
-    securityRisk.score +
-    complexityRisk.score +
-    fileCriticalityRisk.score +
-    changeMagnitude.score +
-    patternRisk.score;
+  const totalScore = securityRisk.score
+    + complexityRisk.score
+    + fileCriticalityRisk.score
+    + changeMagnitude.score
+    + patternRisk.score;
 
   // Normalize to 0-100 scale
   const normalizedScore = Math.min(100, totalScore);
@@ -442,9 +441,9 @@ function calculateRiskScore(analysisResults, parsedDiff, codeChanges) {
 function getRiskLevelColor(level) {
   const colors = {
     CRITICAL: '\x1b[41m\x1b[37m', // Red background, white text
-    HIGH: '\x1b[31m',              // Red text
-    MEDIUM: '\x1b[33m',            // Yellow text
-    LOW: '\x1b[32m',               // Green text
+    HIGH: '\x1b[31m', // Red text
+    MEDIUM: '\x1b[33m', // Yellow text
+    LOW: '\x1b[32m', // Green text
   };
   return colors[level] || '\x1b[0m';
 }

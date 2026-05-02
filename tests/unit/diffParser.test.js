@@ -39,7 +39,7 @@ index 0000000..1234567
 +module.exports = hello;`;
 
         const result = parseDiff(diff);
-        
+
         expect(result).toHaveLength(1);
         expect(result[0].path).toBe('src/newfile.js');
         expect(result[0].changeType).toBe('added');
@@ -59,7 +59,7 @@ index 1234567..0000000
 -module.exports = old;`;
 
         const result = parseDiff(diff);
-        
+
         expect(result).toHaveLength(1);
         expect(result[0].changeType).toBe('deleted');
         expect(result[0].deletions).toBe(3);
@@ -68,7 +68,7 @@ index 1234567..0000000
 
       test('should parse file modification', () => {
         const result = parseDiff(fixtures.simpleDiff);
-        
+
         expect(result).toHaveLength(1);
         expect(result[0].path).toBe('src/app.js');
         expect(result[0].changeType).toBe('modified');
@@ -82,7 +82,7 @@ rename from src/old.js
 rename to src/new.js`;
 
         const result = parseDiff(diff);
-        
+
         expect(result).toHaveLength(1);
         expect(result[0].changeType).toBe('renamed');
         expect(result[0].oldPath).toBe('src/old.js');
@@ -91,14 +91,14 @@ rename to src/new.js`;
 
       test('should handle empty diff', () => {
         const result = parseDiff(fixtures.emptyDiff || ' ');
-        
+
         expect(result).toHaveLength(0);
         expect(Array.isArray(result)).toBe(true);
       });
 
       test('should handle invalid diff format gracefully', () => {
         const result = parseDiff(fixtures.invalidDiff);
-        
+
         expect(Array.isArray(result)).toBe(true);
         expect(result).toHaveLength(0);
       });
@@ -118,9 +118,9 @@ index 1234567..abcdefg 100644
  console.log(a);`;
 
       const result = parseDiff(diff);
-      
+
       expect(result[0].additions).toBe(2);
-      expect(result[0].hunks[0].changes.filter(c => c.type === 'addition')).toHaveLength(2);
+      expect(result[0].hunks[0].changes.filter((c) => c.type === 'addition')).toHaveLength(2);
     });
 
     test('should extract deleted lines correctly', () => {
@@ -136,14 +136,14 @@ index 1234567..abcdefg 100644
  console.log(a);`;
 
       const result = parseDiff(diff);
-      
+
       expect(result[0].deletions).toBe(3);
-      expect(result[0].hunks[0].changes.filter(c => c.type === 'deletion')).toHaveLength(3);
+      expect(result[0].hunks[0].changes.filter((c) => c.type === 'deletion')).toHaveLength(3);
     });
 
     test('should extract modified lines correctly', () => {
       const result = parseDiff(fixtures.securityIssueDiff);
-      
+
       expect(result[0].additions).toBe(1);
       expect(result[0].deletions).toBe(1);
       expect(result[0].hunks).toHaveLength(1);
@@ -151,10 +151,10 @@ index 1234567..abcdefg 100644
 
     test('should count total changes accurately', () => {
       const result = parseDiff(fixtures.multiFileDiff);
-      
+
       const totalAdditions = result.reduce((sum, f) => sum + f.additions, 0);
       const totalDeletions = result.reduce((sum, f) => sum + f.deletions, 0);
-      
+
       expect(totalAdditions).toBeGreaterThan(0);
       expect(totalDeletions).toBeGreaterThan(0);
       expect(typeof totalAdditions).toBe('number');
@@ -173,8 +173,8 @@ index 1234567..abcdefg 100644
  console.log(x, y);`;
 
       const result = parseDiff(diff);
-      const addition = result[0].hunks[0].changes.find(c => c.type === 'addition');
-      
+      const addition = result[0].hunks[0].changes.find((c) => c.type === 'addition');
+
       expect(addition.lineNumber).toBe(13);
     });
   });
@@ -182,7 +182,7 @@ index 1234567..abcdefg 100644
   describe('Multiple File Changes', () => {
     test('should parse multi-file diff correctly', () => {
       const result = parseDiff(fixtures.multiFileDiff);
-      
+
       expect(result).toHaveLength(2);
       expect(result[0].path).toBe('src/auth.js');
       expect(result[1].path).toBe('src/config.js');
@@ -205,7 +205,7 @@ index 1234567..abcdefg 100644
 +module.exports = test;`;
 
       const result = parseDiff(diff);
-      
+
       expect(result).toHaveLength(1);
       expect(result[0].hunks).toHaveLength(2);
       expect(result[0].additions).toBe(2);
@@ -213,8 +213,8 @@ index 1234567..abcdefg 100644
 
     test('should maintain file metadata across multiple files', () => {
       const result = parseDiff(fixtures.multiFileDiff);
-      
-      result.forEach(file => {
+
+      result.forEach((file) => {
         expect(file).toHaveProperty('path');
         expect(file).toHaveProperty('changeType');
         expect(file).toHaveProperty('additions');
@@ -231,7 +231,7 @@ index 1234567..abcdefg 100644
 Binary files a/image.png and b/image.png differ`;
 
       const result = parseDiff(diff);
-      
+
       // Binary files should be skipped due to extension filtering
       expect(result).toHaveLength(0);
     });
@@ -245,14 +245,14 @@ index 1234567..abcdefg 100644
 ${Array(90).fill('+const line = "test";').join('\n')}`;
 
       const result = parseDiff(largeDiff);
-      
+
       expect(result).toHaveLength(1);
       expect(result[0].additions).toBe(90);
     });
 
     test('should reject diffs exceeding maximum size', () => {
       const hugeDiff = 'a'.repeat(CONFIG.MAX_DIFF_SIZE + 1);
-      
+
       expect(() => parseDiff(hugeDiff)).toThrow(/exceeds maximum allowed size/);
     });
 
@@ -282,7 +282,7 @@ index 1234567..abcdefg 100644
  console.log(x);`;
 
       const result = parseDiff(diff);
-      
+
       // Should parse but skip the overly long line
       expect(result).toHaveLength(1);
     });
@@ -299,7 +299,7 @@ index 1234567..abcdefg
 +echo "Hello"`;
 
       const result = parseDiff(diff);
-      
+
       expect(result).toHaveLength(1);
       expect(result[0].path).toBe('script.sh');
     });
@@ -318,8 +318,8 @@ index 1234567..abcdefg 100644
  console.log(a, b, c, d);`;
 
       const result = parseDiff(diff);
-      const contextLines = result[0].hunks[0].changes.filter(c => c.type === 'context');
-      
+      const contextLines = result[0].hunks[0].changes.filter((c) => c.type === 'context');
+
       expect(contextLines.length).toBeGreaterThan(0);
       expect(contextLines[0]).toHaveProperty('oldLineNumber');
       expect(contextLines[0]).toHaveProperty('newLineNumber');
@@ -350,7 +350,7 @@ index 1234567..abcdefg 100644
 +const x = 1;`;
 
       const result = parseDiff(diff);
-      
+
       // Should parse file but skip invalid hunk
       expect(result).toHaveLength(1);
       expect(result[0].hunks).toHaveLength(0);
@@ -363,7 +363,7 @@ index 1234567..abcdefg 100644
 +const x = 1;`;
 
       const result = parseDiff(diff);
-      
+
       // Should skip sections without valid file paths
       expect(result).toHaveLength(0);
     });
@@ -389,7 +389,7 @@ index 1234567..abcdefg 100644
  console.log(another);`;
 
       const result = parseDiff(diff);
-      
+
       // Should parse valid sections despite invalid one
       expect(result.length).toBeGreaterThanOrEqual(1);
     });
@@ -502,7 +502,7 @@ index 1234567..abcdefg 100644
  console.log('test');`;
 
       const result = parseDiff(diff);
-      
+
       // Unsafe paths should be filtered out
       expect(result).toHaveLength(0);
     });
@@ -517,7 +517,7 @@ index 1234567..abcdefg 100644
  more binary`;
 
       const result = parseDiff(diff);
-      
+
       // Binary files should be filtered out
       expect(result).toHaveLength(0);
     });
@@ -527,7 +527,7 @@ index 1234567..abcdefg 100644
     test('should extract code from parsed diff', () => {
       const parsed = parseDiff(fixtures.simpleDiff);
       const result = extractCodeChanges(parsed);
-      
+
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);
     });
@@ -535,7 +535,7 @@ index 1234567..abcdefg 100644
     test('should include file metadata', () => {
       const parsed = parseDiff(fixtures.simpleDiff);
       const result = extractCodeChanges(parsed);
-      
+
       expect(result[0]).toHaveProperty('file');
       expect(result[0]).toHaveProperty('extension');
       expect(result[0]).toHaveProperty('startLine');
@@ -557,7 +557,7 @@ index 1234567..abcdefg 100644
 
       const parsed = parseDiff(diff);
       const result = extractCodeChanges(parsed);
-      
+
       expect(result[0].code).toContain('const b = 2');
       expect(result[0].code).toContain('const c = 3');
       expect(result[0].code).not.toContain('const old = 4');
@@ -576,22 +576,22 @@ index 1234567..0000000
 
       const parsed = parseDiff(diff);
       const result = extractCodeChanges(parsed);
-      
+
       expect(result).toHaveLength(0);
     });
 
     test('should handle multiple files', () => {
       const parsed = parseDiff(fixtures.multiFileDiff);
       const result = extractCodeChanges(parsed);
-      
+
       expect(result.length).toBeGreaterThan(0);
-      const files = [...new Set(result.map(r => r.file))];
+      const files = [...new Set(result.map((r) => r.file))];
       expect(files.length).toBeGreaterThan(1);
     });
 
     test('should handle empty parsed diff', () => {
       const result = extractCodeChanges([]);
-      
+
       expect(result).toHaveLength(0);
       expect(Array.isArray(result)).toBe(true);
     });
@@ -610,7 +610,7 @@ index 1234567..abcdefg 100644
 
       const parsed = parseDiff(diff);
       const result = extractCodeChanges(parsed);
-      
+
       expect(result[0].context).toBeTruthy();
       expect(result[0].context.length).toBeGreaterThan(0);
     });
@@ -631,7 +631,7 @@ index 1234567..abcdefg 100644
 
       const parsed = parseDiff(diff);
       const result = extractCodeChanges(parsed);
-      
+
       expect(result.length).toBeGreaterThanOrEqual(2);
     });
   });
@@ -655,7 +655,7 @@ index 1234567..abcdefg 100644
 
     test('should read and parse diff from file', async () => {
       const result = await parseDiffFromFile(testDiffPath);
-      
+
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);
     });
@@ -667,11 +667,11 @@ index 1234567..abcdefg 100644
     test('should reject files exceeding maximum size', async () => {
       const largePath = path.join(__dirname, '../fixtures/large-diff.txt');
       const largeContent = 'a'.repeat(CONFIG.MAX_DIFF_SIZE + 1);
-      
+
       await fs.writeFile(largePath, largeContent, 'utf8');
-      
+
       await expect(parseDiffFromFile(largePath)).rejects.toThrow(/exceeds maximum allowed/);
-      
+
       await fs.unlink(largePath);
     });
 
@@ -681,7 +681,7 @@ index 1234567..abcdefg 100644
 
     test('should handle file read errors', async () => {
       const invalidPath = path.join(__dirname, '../fixtures/invalid\0path.txt');
-      
+
       await expect(parseDiffFromFile(invalidPath)).rejects.toThrow();
     });
   });
@@ -713,7 +713,7 @@ index 1234567..abcdefg 100644
   describe('Complex Scenarios', () => {
     test('should handle diff with complex nested changes', () => {
       const result = parseDiff(fixtures.complexityIssueDiff);
-      
+
       expect(result).toHaveLength(1);
       expect(result[0].additions).toBeGreaterThan(10);
       expect(result[0].deletions).toBeGreaterThan(0);
@@ -721,10 +721,10 @@ index 1234567..abcdefg 100644
 
     test('should handle security issue diff', () => {
       const result = parseDiff(fixtures.securityIssueDiff);
-      
+
       expect(result).toHaveLength(1);
       expect(result[0].path).toBe('src/database.js');
-      
+
       const codeChanges = extractCodeChanges(result);
       expect(codeChanges[0].code).toContain('userId');
     });
@@ -758,11 +758,11 @@ index 1234567..abcdefg 100644
  module.exports = modified;`;
 
       const result = parseDiff(diff);
-      
+
       expect(result).toHaveLength(3);
-      expect(result.find(f => f.changeType === 'added')).toBeDefined();
-      expect(result.find(f => f.changeType === 'deleted')).toBeDefined();
-      expect(result.find(f => f.changeType === 'modified')).toBeDefined();
+      expect(result.find((f) => f.changeType === 'added')).toBeDefined();
+      expect(result.find((f) => f.changeType === 'deleted')).toBeDefined();
+      expect(result.find((f) => f.changeType === 'modified')).toBeDefined();
     });
 
     test('should handle diff with no newline at end of file', () => {
@@ -776,7 +776,7 @@ index 1234567..abcdefg 100644
 \\ No newline at end of file`;
 
       const result = parseDiff(diff);
-      
+
       expect(result).toHaveLength(1);
       expect(result[0].additions).toBeGreaterThan(0);
     });

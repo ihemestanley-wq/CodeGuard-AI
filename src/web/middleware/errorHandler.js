@@ -16,7 +16,7 @@ function errorHandler(err, req, res, next) {
     stack: err.stack,
     path: req.path,
     method: req.method,
-    ip: req.ip
+    ip: req.ip,
   });
 
   // Determine status code
@@ -25,7 +25,7 @@ function errorHandler(err, req, res, next) {
   // Prepare error response
   const errorResponse = {
     success: false,
-    error: err.message || 'Internal server error'
+    error: err.message || 'Internal server error',
   };
 
   // Add stack trace in development mode
@@ -44,7 +44,7 @@ function notFoundHandler(req, res) {
   res.status(404).json({
     success: false,
     error: 'Route not found',
-    path: req.path
+    path: req.path,
   });
 }
 
@@ -61,7 +61,7 @@ function asyncHandler(fn) {
 module.exports = {
   errorHandler,
   notFoundHandler,
-  asyncHandler
+  asyncHandler,
 };
 
 // Made with Bob

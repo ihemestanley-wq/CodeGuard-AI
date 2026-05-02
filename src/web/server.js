@@ -9,6 +9,7 @@ const config = require('./config');
 const { applySecurityMiddleware } = require('./middleware/security');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const apiRoutes = require('./routes/analyze');
+const modesRoutes = require('./routes/modes');
 const logger = require('../observability/logger');
 
 // Create Express app
@@ -30,7 +31,7 @@ app.use((req, res, next) => {
     method: req.method,
     path: req.path,
     ip: req.ip,
-    userAgent: req.get('user-agent')
+    userAgent: req.get('user-agent'),
   });
   next();
 });
@@ -46,6 +47,7 @@ app.use('/examples', express.static(path.join(__dirname, '../../examples')));
 
 // API routes
 app.use('/api', apiRoutes);
+app.use('/api', modesRoutes);
 
 // Root route - serve vanilla JS UI index.html
 app.get('/', (req, res) => {
@@ -58,12 +60,12 @@ app.get('/', (req, res) => {
         version: require('../../package.json').version,
         endpoints: {
           analyze: 'POST /api/analyze',
-          health: 'GET /api/health'
+          health: 'GET /api/health',
         },
         ui: {
           vanilla: 'http://localhost:3000/',
-          react: 'http://localhost:3000/react'
-        }
+          react: 'http://localhost:3000/react',
+        },
       });
     }
   });
@@ -77,7 +79,7 @@ app.get('/react', (req, res) => {
       res.status(404).json({
         success: false,
         message: 'React UI not built yet. Run "npm run build:frontend" first.',
-        error: err.message
+        error: err.message,
       });
     }
   });
@@ -94,20 +96,20 @@ const PORT = config.server.port;
 const HOST = config.server.host;
 
 const server = app.listen(PORT, HOST, () => {
-  logger.info(`CodeGuard AI Web Server started`, {
+  logger.info('CodeGuard AI Web Server started', {
     port: PORT,
     host: HOST,
     environment: config.server.env,
-    nodeVersion: process.version
+    nodeVersion: process.version,
   });
   console.log(`\n🚀 CodeGuard AI Web Server running at http://${HOST}:${PORT}`);
-  console.log(`\n🎨 User Interfaces:`);
+  console.log('\n🎨 User Interfaces:');
   console.log(`   Vanilla JS UI: http://${HOST}:${PORT}/`);
   console.log(`   React UI:      http://${HOST}:${PORT}/react`);
-  console.log(`\n📊 API Endpoints:`);
+  console.log('\n📊 API Endpoints:');
   console.log(`   POST http://${HOST}:${PORT}/api/analyze - Analyze PR diff`);
   console.log(`   GET  http://${HOST}:${PORT}/api/health - Health check`);
-  console.log(`\n✨ Ready to analyze code!\n`);
+  console.log('\n✨ Ready to analyze code!\n');
 });
 
 // Graceful shutdown
@@ -131,7 +133,7 @@ process.on('SIGINT', () => {
 process.on('uncaughtException', (error) => {
   logger.error('Uncaught Exception:', {
     error: error.message,
-    stack: error.stack
+    stack: error.stack,
   });
   process.exit(1);
 });
@@ -139,8 +141,8 @@ process.on('uncaughtException', (error) => {
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason, promise) => {
   logger.error('Unhandled Rejection:', {
-    reason: reason,
-    promise: promise
+    reason,
+    promise,
   });
 });
 

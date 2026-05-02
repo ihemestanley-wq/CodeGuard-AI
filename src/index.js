@@ -5,21 +5,21 @@
  * Command-line interface for analyzing git diffs and assessing deployment risks
  */
 
+const fs = require('fs');
+const path = require('path');
 const { analyzePR } = require('./agent/analyzer');
 const { calculateRiskScore } = require('./agent/riskEngine');
 const { parseDiff, extractCodeChanges } = require('./agent/diffParser');
 const { analyzeCodeChanges } = require('./agent/analyzer');
-const fs = require('fs');
-const path = require('path');
 
 // Package version
 const PACKAGE_VERSION = '1.0.0';
 
 // Exit codes
 const EXIT_CODES = {
-  SUCCESS: 0,        // Low/Medium risk - safe to deploy
-  HIGH_RISK: 1,      // High/Critical risk - block deployment
-  ERROR: 2,          // Error occurred (file not found, invalid input, etc.)
+  SUCCESS: 0, // Low/Medium risk - safe to deploy
+  HIGH_RISK: 1, // High/Critical risk - block deployment
+  ERROR: 2, // Error occurred (file not found, invalid input, etc.)
 };
 
 /**
@@ -116,7 +116,7 @@ function extractRiskLevel(report) {
   if (riskMatch) {
     return riskMatch[1].toUpperCase();
   }
-  
+
   // Fallback: check for risk indicators in report
   if (report.includes('CRITICAL') || report.includes('🚨')) {
     return 'CRITICAL';
@@ -127,7 +127,7 @@ function extractRiskLevel(report) {
   if (report.includes('MEDIUM') || report.includes('⚡')) {
     return 'MEDIUM';
   }
-  
+
   return 'LOW';
 }
 
@@ -174,7 +174,7 @@ function analyzeDiffFile(filePath) {
   try {
     // Perform analysis
     const report = analyzePR(diffContent);
-    
+
     // Display report
     console.log(report);
 
@@ -183,7 +183,6 @@ function analyzeDiffFile(filePath) {
     const exitCode = getExitCode(riskLevel);
 
     return { success: true, riskLevel, exitCode };
-
   } catch (error) {
     console.error(`❌ Analysis failed: ${error.message}`);
     if (process.env.DEBUG) {
@@ -219,7 +218,7 @@ function main() {
   }
 
   // Filter out any flags and get file paths
-  const filePaths = args.filter(arg => !arg.startsWith('-'));
+  const filePaths = args.filter((arg) => !arg.startsWith('-'));
 
   if (filePaths.length === 0) {
     console.error('❌ Error: No diff file specified\n');
@@ -248,19 +247,17 @@ function main() {
     console.log(`\n${'='.repeat(80)}`);
     console.log('📊 ANALYSIS SUMMARY');
     console.log('='.repeat(80));
-    
+
     for (const result of results) {
-      const status = result.success 
+      const status = result.success
         ? `${result.riskLevel} (Exit: ${result.exitCode})`
         : `ERROR (Exit: ${result.exitCode})`;
       console.log(`  ${result.filePath}: ${status}`);
     }
 
-    const successCount = results.filter(r => r.success).length;
-    const errorCount = results.filter(r => !r.success).length;
-    const highRiskCount = results.filter(r => 
-      r.success && (r.riskLevel === 'HIGH' || r.riskLevel === 'CRITICAL')
-    ).length;
+    const successCount = results.filter((r) => r.success).length;
+    const errorCount = results.filter((r) => !r.success).length;
+    const highRiskCount = results.filter((r) => r.success && (r.riskLevel === 'HIGH' || r.riskLevel === 'CRITICAL')).length;
 
     console.log(`\n  Total: ${filePaths.length} | Success: ${successCount} | Errors: ${errorCount} | High Risk: ${highRiskCount}`);
     console.log('='.repeat(80));
@@ -268,7 +265,7 @@ function main() {
 
   // Display final exit code message
   console.log(`\n🏁 Final Exit Code: ${highestExitCode}`);
-  
+
   if (highestExitCode === EXIT_CODES.SUCCESS) {
     console.log('✅ Analysis complete - Safe to deploy (Low/Medium risk)');
   } else if (highestExitCode === EXIT_CODES.HIGH_RISK) {

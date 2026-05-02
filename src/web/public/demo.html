@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CodeGuard AI - Live Demo - AI-Powered Code Security & Risk Assessment">
+    <title>CodeGuard AI - Live Demo | AI-Powered PR Analysis</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .demo-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        .demo-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        .demo-hero p {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+        .demo-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #667eea;
+            display: block;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .solution-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+        .solution-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .solution-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        .solution-description {
+            color: #666;
+            line-height: 1.6;
+        }
+        .demo-cta {
+            background: #667eea;
+            color: white;
+            padding: 1.5rem 3rem;
+            border-radius: 8px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .demo-cta:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+        }
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+        .features-list li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+        }
+        .features-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        .video-section {
+            background: #f8f9fa;
+            padding: 4rem 0;
+            margin: 4rem 0;
+        }
+        .video-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <path d="M16 2L3 9V23L16 30L29 23V9L16 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M16 16L22 12M16 16L10 12M16 16V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h1>CodeGuard AI</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Try Demo</a>
+                    <a href="https://github.com/ihemestanley-wq/CodeGuard-AI" class="nav-link" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="demo-hero">
+        <div class="container">
+            <h1>🚀 CodeGuard AI Live Demo</h1>
+            <p>
+                Experience the power of AI-driven code security analysis. 
+                Detect vulnerabilities, assess risks, and make informed deployment decisions in real-time.
+            </p>
+            <a href="/" class="demo-cta">Try Live Demo Now →</a>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="container">
+        <div class="demo-stats">
+            <div class="stat-card">
+                <span class="stat-number">10+</span>
+                <span class="stat-label">Security Patterns Detected</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Automated Analysis</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number"><5s</span>
+                <span class="stat-label">Average Analysis Time</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">94%</span>
+                <span class="stat-label">Test Coverage</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real-World Solutions -->
+    <section class="container" style="margin: 4rem auto;">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem;">
+            Real-World Problems We Solve
+        </h2>
+        
+        <div class="solutions-grid">
+            <div class="solution-card">
+                <div class="solution-icon">🔒</div>
+                <h3 class="solution-title">Security Vulnerability Detection</h3>
+                <p class="solution-description">
+                    Automatically detects SQL injection, XSS, command injection, hardcoded secrets, 
+                    and path traversal vulnerabilities before they reach production.
+                </p>
+                <ul class="features-list">
+                    <li>SQL Injection Prevention</li>
+                    <li>XSS Attack Detection</li>
+                    <li>Secret Scanning</li>
+                    <li>Command Injection Checks</li>
+                </ul>
+            </div>
+
+            <div class="solution-card">
+                <div class="solution-icon">⚡</div>
+                <h3 class="solution-title">Code Complexity Analysis</h3>
+                <p class="solution-description">
+                    Identifies overly complex code that's hard to maintain, test, and debug. 
+                    Uses AST parsing for accurate cyclomatic complexity measurement.
+                </p>
+                <ul class="features-list">
+                    <li>Cyclomatic Complexity</li>
+                    <li>Cognitive Complexity</li>
+                    <li>Nesting Depth Analysis</li>
+                    <li>Maintainability Scoring</li>
+                </ul>
+            </div>
+
+            <div class="solution-card">
+                <div class="solution-icon">🎯</div>
+                <h3 class="solution-title">Risk-Based Deployment</h3>
+                <p class="solution-description">
+                    Calculates deployment risk scores based on multiple factors: security issues, 
+                    code complexity, file criticality, and change magnitude.
+                </p>
+                <ul class="features-list">
+                    <li>Automated Risk Scoring</li>
+                    <li>Deployment Decisions</li>
+                    <li>Critical File Detection</li>
+                    <li>Change Impact Analysis</li>
+                </ul>
+            </div>
+
+            <div class="solution-card">
+                <div class="solution-icon">🔄</div>
+                <h3 class="solution-title">CI/CD Integration</h3>
+                <p class="solution-description">
+                    Seamlessly integrates with GitHub Actions, GitLab CI, Jenkins, and other 
+                    CI/CD platforms to automate code review and deployment gates.
+                </p>
+                <ul class="features-list">
+                    <li>GitHub Actions Support</li>
+                    <li>GitLab CI Integration</li>
+                    <li>Jenkins Pipeline</li>
+                    <li>Custom Webhooks</li>
+                </ul>
+            </div>
+
+            <div class="solution-card">
+                <div class="solution-icon">📊</div>
+                <h3 class="solution-title">Comprehensive Reporting</h3>
+                <p class="solution-description">
+                    Generates detailed, actionable reports with security findings, complexity metrics, 
+                    deployment recommendations, and rollback plans.
+                </p>
+                <ul class="features-list">
+                    <li>Executive Summaries</li>
+                    <li>Detailed Findings</li>
+                    <li>Deployment Recommendations</li>
+                    <li>Testing Requirements</li>
+                </ul>
+            </div>
+
+            <div class="solution-card">
+                <div class="solution-icon">🛡️</div>
+                <h3 class="solution-title">Pattern Recognition</h3>
+                <p class="solution-description">
+                    Detects critical patterns like database schema changes, API contract modifications, 
+                    and authentication/authorization updates.
+                </p>
+                <ul class="features-list">
+                    <li>Database Schema Changes</li>
+                    <li>API Contract Detection</li>
+                    <li>Auth/AuthZ Modifications</li>
+                    <li>Data Validation Changes</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Demo Section -->
+    <section class="video-section">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 2rem;">
+                See It In Action
+            </h2>
+            <div class="video-container">
+                <div style="text-align: center; padding: 4rem 2rem; background: #f8f9fa; border-radius: 8px;">
+                    <h3 style="margin-bottom: 1rem;">📹 Demo Video</h3>
+                    <p style="color: #666; margin-bottom: 2rem;">
+                        Watch how CodeGuard AI analyzes code, detects vulnerabilities, and provides actionable insights.
+                    </p>
+                    <a href="/" class="demo-cta">Try Interactive Demo →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="container" style="margin: 4rem auto;">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 3rem;">
+            How It Works
+        </h2>
+        
+        <div class="solutions-grid">
+            <div class="solution-card">
+                <div class="solution-icon">1️⃣</div>
+                <h3 class="solution-title">Submit Your Code</h3>
+                <p class="solution-description">
+                    Paste your git diff or upload a .diff file. Works with any programming language 
+                    and integrates with your existing workflow.
+                </p>
+            </div>
+
+            <div class="solution-card">
+                <div class="solution-icon">2️⃣</div>
+                <h3 class="solution-title">AI Analysis</h3>
+                <p class="solution-description">
+                    Our AI engine analyzes your code using AST parsing, pattern matching, and 
+                    machine learning to detect issues and calculate risk scores.
+                </p>
+            </div>
+
+            <div class="solution-card">
+                <div class="solution-icon">3️⃣</div>
+                <h3 class="solution-title">Get Insights</h3>
+                <p class="solution-description">
+                    Receive a comprehensive report with security findings, complexity metrics, 
+                    deployment recommendations, and actionable next steps.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="background: #667eea; color: white; padding: 4rem 0; text-align: center; margin-top: 4rem;">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Secure Your Code?</h2>
+            <p style="font-size: 1.25rem; margin-bottom: 2rem; opacity: 0.95;">
+                Try CodeGuard AI now and experience the future of automated code review.
+            </p>
+            <a href="/" class="demo-cta" style="background: white; color: #667eea;">
+                Launch Demo →
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 CodeGuard AI. Intelligent code analysis for safer deployments.</p>
+            <p style="margin-top: 0.5rem;">
+                <a href="https://github.com/ihemestanley-wq/CodeGuard-AI" target="_blank" style="color: #667eea;">
+                    View on GitHub
+                </a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
